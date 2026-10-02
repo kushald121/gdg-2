@@ -11,6 +11,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='13' height='13' fill='%234285F4'/><rect x='17' y='2' width='13' height='13' fill='%23EA4335'/><rect x='2' y='17' width='13' height='13' fill='%23FBBC05'/><rect x='17' y='17' width='13' height='13' fill='%2334A853'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://drive.google.com">
+<link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
 <!-- GSAP + ScrollTrigger + Canvas Confetti CDNs -->
@@ -26,8 +29,8 @@
   --grid-l:rgba(16,20,51,.08); --grid-d:rgba(255,255,255,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.5}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.5;text-rendering:optimizeLegibility}
 ::selection{background:var(--yellow);color:var(--ink)}
 img{max-width:100%;display:block}
 a{color:inherit}
@@ -42,12 +45,7 @@ h1,h2,h3,.disp{font-family:'Archivo Black',sans-serif;letter-spacing:-.02em;line
 .hl-w{background:linear-gradient(transparent 58%,rgba(255,255,255,.9) 58%,rgba(255,255,255,.9) 94%,transparent 94%);padding:0 .12em}
 
 /* Top Progress Bar */
-#scroll-progress{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg, #ea4335 0%, #4285f4 33%, #fbbc04 66%, #34a853 100%);transform-origin:left center;transform:scaleX(0);z-index:10000;pointer-events:none}
-
-/* Cat & Mouse Interactive Cursor */
-.actor{position:fixed;top:0;left:0;font-size:28px;pointer-events:none;z-index:9999;user-select:none;will-change:transform}
-#cat{transition:filter .3s}
-#cat.sleep{filter:grayscale(70%) opacity(0.6)}
+#scroll-progress{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg, #ea4335 0%, #4285f4 33%, #fbbc04 66%, #34a853 100%);transform-origin:left center;transform:scaleX(0);z-index:10000;pointer-events:none;will-change:transform}
 
 /* Reveal */
 .rev{opacity:0;transform:translateY(26px) rotate(var(--rr,0deg));transition:opacity .6s ease var(--d,0s),transform .6s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
@@ -146,7 +144,7 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 @media(max-width:900px){.sp-grid{grid-template-columns:1fr}}
 .polaroid{position:relative;background:#fff;border:2px solid var(--ink);padding:12px 12px 0;transform:rotate(-2.5deg);max-width:380px;margin:auto;box-shadow:8px 8px 0 rgba(0,0,0,0.4);transition:transform .3s ease-out}
 .polaroid:hover{transform:rotate(0deg) scale(1.03)}
-.polaroid .ph{aspect-ratio:4/5;overflow:hidden;background:var(--navy);position:relative;border:2px solid var(--ink)}
+.polaroid .ph{aspect-ratio:4/5;overflow:hidden;background:var(--navy);position:relative;border:2px solid var(--ink);clip-path:inset(0 0 100% 0);transition:clip-path 1s cubic-bezier(0.77,0,0.175,1)}
 .polaroid img{width:100%;height:100%;object-fit:cover;position:relative;z-index:2}
 .ph-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:5rem;color:var(--yellow);z-index:1}
 .tape{position:absolute;width:96px;height:26px;background:rgba(251,188,5,.9);border:1px solid rgba(16,20,51,.25);top:-13px;left:26px;transform:rotate(-7deg);z-index:3}
@@ -175,6 +173,18 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 .c-d{grid-column:span 4;background:var(--green);color:#fff;transform:rotate(.8deg)}
 @media(max-width:820px){.bento .card{grid-column:span 6!important}}
 
+/* ============ FUTURE (NEO-BRUTALISM) ============ */
+.future{padding:5rem 0;background:var(--paper);position:relative}
+.eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;position:relative}
+@media(max-width:820px){.eps{grid-template-columns:1fr}}
+.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--er));transition:transform .25s,box-shadow .25s;position:sticky;top:8rem}
+.ep:hover{transform:rotate(0) translateY(-6px);box-shadow:12px 12px 0 var(--ec)}
+.ep .bar{height:14px;background:var(--ec);border-bottom:3px solid var(--ink)}
+.ep .in{padding:1.4rem}
+.ep .no{font-family:'Caveat';font-size:1.4rem;color:var(--ec);font-weight:700}
+.ep h3{font-size:1.4rem;margin:.3rem 0 .6rem}
+.ep p{font-weight:500;font-size:.95rem}
+
 /* ============ THE PLAN TIMELINE SECTION ============ */
 .plan{background:var(--navy);--g:var(--grid-d);color:#fff;padding:5.5rem 0;position:relative;overflow:hidden;overflow-x:clip}
 .plan-line{position:absolute;left:calc(120px + 17px);top:0;bottom:0;width:4px;background:linear-gradient(180deg, var(--blue), var(--red), var(--yellow), var(--green), var(--royal));border-radius:4px;box-shadow:0 0 12px rgba(66,133,244,0.6);transform-origin:top center;transform:scaleY(0);z-index:1}
@@ -201,39 +211,29 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 .shutter-blind{position:absolute;left:0;right:0;height:4.2%;background:linear-gradient(180deg, #3d2212 0%, #1a0f07 60%, #3d2212 100%);border-bottom:1.5px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 3px 6px rgba(0,0,0,0.8);transform-origin:top center;transition:transform 1.4s cubic-bezier(0.77, 0, 0.175, 1);z-index:2}
 .shutter-open .shutter-blind{transform:scaleY(0.04) translateY(-900%)}
 
-/* ============ LOOT ============ */
-.loot{padding:5rem 0}
-.loot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
-@media(max-width:980px){.loot-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:620px){.loot-grid{grid-template-columns:repeat(2,1fr)}}
-.loot-card{border:2px solid var(--ink);background:#fff;padding:1.2rem .9rem 1rem;text-align:center;box-shadow:5px 5px 0 var(--ink);transition:transform .25s,box-shadow .25s;transform:rotate(var(--lr,0deg))}
+/* ============ LOOT — PINNED HORIZONTAL SCROLL ============ */
+.loot{padding:0;overflow:hidden;background:var(--paper)}
+.loot-pin-wrap{overflow:hidden}
+.loot-sticky{display:flex;flex-direction:column;justify-content:center;height:100vh;padding:3rem 0;will-change:transform}
+.loot-header{text-align:center;padding:0 22px;margin-bottom:2.4rem;flex-shrink:0}
+.loot-scroll-area{overflow:hidden;width:100%;flex-shrink:0}
+.loot-track{display:flex;gap:1.4rem;padding:0.4rem 6vw;width:max-content;will-change:transform}
+.loot-card{border:2px solid var(--ink);background:#fff;padding:1.4rem 1.2rem 1.2rem;text-align:center;box-shadow:5px 5px 0 var(--ink);transition:transform .25s,box-shadow .25s;transform:rotate(var(--lr,0deg));width:min(240px,70vw);flex-shrink:0}
 .loot-card:hover{transform:rotate(0) translateY(-8px);box-shadow:8px 10px 0 var(--lc,var(--ink))}
-.loot-card svg{width:82px;height:82px;margin:0 auto .6rem}
-.loot-card b{font-family:'Archivo Black';font-size:.95rem;display:block}
-.loot-card small{font-weight:600;opacity:.7;font-size:.78rem}
-.loot-note{margin-top:2.4rem;display:flex;flex-wrap:wrap;align-items:center;gap:1.4rem;justify-content:center}
-.burst{width:130px;height:130px;animation:spin 14s linear infinite}
+.loot-card svg{width:90px;height:90px;margin:0 auto .8rem}
+.loot-card b{font-family:'Archivo Black';font-size:1rem;display:block}
+.loot-card small{font-weight:600;opacity:.7;font-size:.8rem}
+.loot-note{display:flex;flex-wrap:wrap;align-items:center;gap:1.2rem;justify-content:center;padding:1.6rem 22px 0;flex-shrink:0}
+.burst{width:110px;height:110px;animation:spin 14s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loot-note .big{font-family:'Archivo Black';font-size:clamp(1.4rem,3.6vw,2.3rem)}
+.loot-note .big{font-family:'Archivo Black';font-size:clamp(1.2rem,3vw,2rem)}
+.loot-scroll-hint{text-align:center;padding-top:1rem;font-size:.82rem;font-weight:700;letter-spacing:.14em;opacity:.55;flex-shrink:0}
 
 /* ============ 3D DEVCON PASS SECTION (HORIZONTAL LAYOUT) ============ */
 .pass-section{position:relative;background:#0b0a16;color:#fff;padding:5.5rem 0;overflow:hidden}
 .pass-stage{position:relative;width:min(740px, 92vw);aspect-ratio:16/9.6;margin:3rem auto 2rem;perspective:1000px;transform-style:preserve-3d;cursor:grab}
 .pass-fan-card{position:absolute;inset:0;border-radius:20px;overflow:hidden;border:2.5px solid rgba(255,255,255,0.45);background:#070913;box-shadow:0 30px 80px rgba(0,0,0,0.85), 0 0 35px rgba(66,133,244,0.3);transform-origin:bottom center;transition:transform 0.15s ease-out}
 .pass-fan-card img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
-
-
-/* ============ FUTURE (NEO-BRUTALISM) ============ */
-.future{padding:5rem 0;background:var(--paper)}
-.eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
-@media(max-width:820px){.eps{grid-template-columns:1fr}}
-.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--er));transition:transform .25s,box-shadow .25s}
-.ep:hover{transform:rotate(0) translateY(-6px);box-shadow:12px 12px 0 var(--ec)}
-.ep .bar{height:14px;background:var(--ec);border-bottom:3px solid var(--ink)}
-.ep .in{padding:1.4rem}
-.ep .no{font-family:'Caveat';font-size:1.4rem;color:var(--ec);font-weight:700}
-.ep h3{font-size:1.4rem;margin:.3rem 0 .6rem}
-.ep p{font-weight:500;font-size:.95rem}
 
 /* ============ STORY / INSTA ============ */
 .story{background:var(--royal);--g:var(--grid-d);color:#fff;padding:5rem 0;overflow:hidden}
@@ -286,10 +286,6 @@ footer a:hover{color:var(--yellow)}
 
 <!-- Top Scroll Progress Bar -->
 <div id="scroll-progress"></div>
-
-<!-- Cat & Mouse Interactive Elements -->
-<div class="actor" id="mouse" aria-hidden="true">🐭</div>
-<div class="actor" id="cat" aria-hidden="true">🐱</div>
 
 <!-- NAV -->
 <nav>
@@ -567,39 +563,60 @@ footer a:hover{color:var(--yellow)}
   </div>
 </section>
 
-<!-- LOOT -->
+<!-- LOOT — PINNED HORIZONTAL SCROLL -->
 <section class="loot gridbg" id="loot">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><p class="lab rev" style="--c:var(--green)"><i></i>05 / The loot table</p>
-      <h2 class="rev" style="--d:.06s">Walk out <span class="hl">loaded</span></h2></div>
-      <p class="hand rev" style="--d:.12s">price tag: ₹0 (yes, really)</p>
-    </div>
-    <div class="loot-grid">
-      <div class="loot-card rev" style="--lr:-2deg;--lc:var(--blue)">
-        <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><rect x="82" y="86" width="10" height="10" fill="var(--blue)"/><rect x="94" y="86" width="10" height="10" fill="var(--red)"/><rect x="106" y="86" width="10" height="10" fill="var(--yellow)"/><text x="100" y="126" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">MLH</text></svg>
-        <b>MLH Tee</b><small>black. heavy. flexy.</small>
+  <div class="loot-pin-wrap" id="lootPinWrap">
+    <div class="loot-sticky" id="lootSticky">
+
+      <!-- Header -->
+      <div class="loot-header">
+        <p class="lab" style="justify-content:center;--c:var(--green);margin-bottom:.6rem"><i></i>05 / The loot table</p>
+        <h2 style="font-size:clamp(2rem,5.4vw,3.6rem)">Walk out <span class="hl">loaded</span></h2>
+        <p class="hand" style="font-size:1.3rem;margin-top:.3rem">price tag: ₹0 (yes, really)</p>
       </div>
-      <div class="loot-card rev" style="--lr:1.5deg;--lc:var(--red);--d:.06s">
-        <svg viewBox="0 0 200 200"><path d="M70 12 L60 62 M130 12 L140 62" stroke="var(--ink)" stroke-width="6"/><rect x="48" y="56" width="104" height="120" rx="12" fill="#fff" stroke="var(--ink)" stroke-width="6"/><rect x="86" y="70" width="28" height="9" rx="4.5" fill="var(--ink)"/><circle cx="100" cy="112" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M72 152h56" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/></svg>
-        <b>GDG Badge</b><small>lanyard included</small>
+
+      <!-- Scrolling card track -->
+      <div class="loot-scroll-area">
+        <div class="loot-track" id="lootTrack">
+
+          <div class="loot-card" style="--lr:-2deg;--lc:var(--blue)">
+            <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><rect x="82" y="86" width="10" height="10" fill="var(--blue)"/><rect x="94" y="86" width="10" height="10" fill="var(--red)"/><rect x="106" y="86" width="10" height="10" fill="var(--yellow)"/><text x="100" y="126" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">MLH</text></svg>
+            <b>MLH Tee</b><small>black. heavy. flexy.</small>
+          </div>
+
+          <div class="loot-card" style="--lr:1.5deg;--lc:var(--red)">
+            <svg viewBox="0 0 200 200"><path d="M70 12 L60 62 M130 12 L140 62" stroke="var(--ink)" stroke-width="6"/><rect x="48" y="56" width="104" height="120" rx="12" fill="#fff" stroke="var(--ink)" stroke-width="6"/><rect x="86" y="70" width="28" height="9" rx="4.5" fill="var(--ink)"/><circle cx="100" cy="112" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M72 152h56" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/></svg>
+            <b>GDG Badge</b><small>lanyard included</small>
+          </div>
+
+          <div class="loot-card" style="--lr:-1deg;--lc:var(--yellow)">
+            <svg viewBox="0 0 200 200"><rect x="28" y="24" width="144" height="152" rx="10" fill="#fff" stroke="var(--ink)" stroke-width="6"/><circle cx="68" cy="66" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M132 44l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><circle cx="70" cy="132" r="17" fill="var(--green)" stroke="var(--ink)" stroke-width="5"/><path d="M120 122h28M120 142h28" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/></svg>
+            <b>Sticker Pack</b><small>laptop fuel</small>
+          </div>
+
+          <div class="loot-card" style="--lr:2deg;--lc:var(--green)">
+            <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="var(--ink)" stroke-width="6"/><circle cx="100" cy="100" r="52" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="8 8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="var(--ink)">&lt;/&gt;</text></svg>
+            <b>DevCoin</b><small>mint it live</small>
+          </div>
+
+          <div class="loot-card" style="--lr:-1.6deg;--lc:var(--royal)">
+            <svg viewBox="0 0 200 200"><path d="M24 52 H176 V84 A16 16 0 0 0 176 116 V148 H24 V116 A16 16 0 0 0 24 84 Z" fill="var(--green)" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M136 52 V148" stroke="var(--ink)" stroke-width="4" stroke-dasharray="7 7"/><text x="80" y="110" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">PASS</text></svg>
+            <b>Rewards Pass</b><small>faculty mentors too</small>
+          </div>
+
+          <!-- Bonus end card: ₹0 burst -->
+          <div class="loot-card" style="--lr:1deg;--lc:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow)">
+            <svg class="burst" viewBox="0 0 200 200" aria-hidden="true" style="width:110px;height:110px;animation:spin 14s linear infinite"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
+            <b style="font-size:1.1rem;margin-top:.5rem">Everything above.</b>
+            <small style="opacity:1;font-size:.85rem">Free. Just show up.</small>
+          </div>
+
+        </div>
       </div>
-      <div class="loot-card rev" style="--lr:-1deg;--lc:var(--yellow);--d:.12s">
-        <svg viewBox="0 0 200 200"><rect x="28" y="24" width="144" height="152" rx="10" fill="#fff" stroke="var(--ink)" stroke-width="6"/><circle cx="68" cy="66" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M132 44l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><circle cx="70" cy="132" r="17" fill="var(--green)" stroke="var(--ink)" stroke-width="5"/><path d="M120 122h28M120 142h28" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/></svg>
-        <b>Sticker Pack</b><summary></summary><small>laptop fuel</small>
-      </div>
-      <div class="loot-card rev" style="--lr:2deg;--lc:var(--green);--d:.18s">
-        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="var(--ink)" stroke-width="6"/><circle cx="100" cy="100" r="52" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="8 8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="var(--ink)">&lt;/&gt;</text></svg>
-        <b>DevCoin</b><small>mint it live</small>
-      </div>
-      <div class="loot-card rev" style="--lr:-1.6deg;--lc:var(--royal);--d:.24s">
-        <svg viewBox="0 0 200 200"><path d="M24 52 H176 V84 A16 16 0 0 0 176 116 V148 H24 V116 A16 16 0 0 0 24 84 Z" fill="var(--green)" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M136 52 V148" stroke="var(--ink)" stroke-width="4" stroke-dasharray="7 7"/><text x="80" y="110" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">PASS</text></svg>
-        <b>Rewards Pass</b><small>faculty mentors too</small>
-      </div>
-    </div>
-    <div class="loot-note rev">
-      <svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
-      <p class="big">Everything above. Free.<br>Effort tag: <span class="hl">just show up.</span></p>
+
+      <!-- Scroll hint -->
+      <p class="loot-scroll-hint" id="lootHint">SCROLL TO REVEAL ALL LOOT →</p>
+
     </div>
   </div>
 </section>
@@ -742,35 +759,6 @@ const AudioSynth = new class {
     }
     if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
   }
-  playMeow(pitch = 1.0) {
-    this.init(); if (!this.ctx) return;
-    try {
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'sine';
-      const now = this.ctx.currentTime, baseFreq = 450 * pitch;
-      osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.65, now + 0.15);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.75, now + 0.38);
-      gain.gain.setValueAtTime(0.01, now);
-      gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
-      osc.connect(gain); gain.connect(this.ctx.destination);
-      osc.start(now); osc.stop(now + 0.38);
-    } catch(e){}
-  }
-  playSqueak() {
-    this.init(); if (!this.ctx) return;
-    try {
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'triangle'; const now = this.ctx.currentTime;
-      osc.frequency.setValueAtTime(1400, now);
-      osc.frequency.exponentialRampToValueAtTime(2200, now + 0.08);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-      osc.connect(gain); gain.connect(this.ctx.destination);
-      osc.start(now); osc.stop(now + 0.1);
-    } catch(e){}
-  }
   playClick() {
     this.init(); if (!this.ctx) return;
     try {
@@ -787,14 +775,21 @@ const AudioSynth = new class {
 };
 
 /* ==========================================================================
-   2. FAST SMOOTH SCROLL PROGRESS BAR
+   2. HIGH-PERFORMANCE SMOOTH SCROLL PROGRESS BAR (rAF THROTTLED)
    ========================================================================== */
+let ticking = false;
 window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
-  const pBar = document.getElementById('scroll-progress');
-  if (pBar) pBar.style.transform = `scaleX(${progress})`;
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
+      const pBar = document.getElementById('scroll-progress');
+      if (pBar) pBar.style.transform = `scaleX(${progress})`;
+      ticking = false;
+    });
+    ticking = true;
+  }
 }, { passive: true });
 
 /* ==========================================================================
@@ -1042,58 +1037,7 @@ window.addEventListener('scroll', () => {
 })();
 
 /* ==========================================================================
-   3. CAT & MOUSE INTERACTIVE CURSOR
-   ========================================================================== */
-(function setupCatMouse(){
-  const mouseEl = document.getElementById('mouse'), catEl = document.getElementById('cat');
-  if(!mouseEl || !catEl) return;
-  let target = { x: window.innerWidth * 0.6, y: window.innerHeight * 0.45 };
-  let mousePos = { x: target.x, y: target.y };
-  let catPos = { x: window.innerWidth * 0.2, y: window.innerHeight * 0.7 };
-  let lastMove = Date.now(), cooldown = 0;
-
-  window.addEventListener('pointermove', e => {
-    target.x = e.clientX; target.y = e.clientY; lastMove = Date.now();
-  }, {passive: true});
-
-  window.addEventListener('pointerdown', e => {
-    target.x = e.clientX; target.y = e.clientY;
-    AudioSynth.playSqueak();
-  }, {passive: true});
-
-  function loop(){
-    mousePos.x += (target.x - mousePos.x) * 0.25;
-    mousePos.y += (target.y - mousePos.y) * 0.25;
-    mouseEl.style.transform = `translate(${mousePos.x - 15}px, ${mousePos.y - 15}px)`;
-
-    const dx = mousePos.x - catPos.x, dy = mousePos.y - catPos.y;
-    const dist = Math.hypot(dx, dy);
-    catPos.x += dx * 0.06; catPos.y += dy * 0.06;
-    const rot = Math.max(-14, Math.min(14, dy * 0.03));
-    catEl.style.transform = `translate(${catPos.x - 15}px, ${catPos.y - 15}px) scaleX(${dx > 0 ? -1 : 1}) rotate(${rot}deg)`;
-
-    // Catch trigger
-    if (dist < 28 && Date.now() > cooldown) {
-      cooldown = Date.now() + 900;
-      AudioSynth.playMeow();
-      if (typeof confetti !== 'undefined') {
-        confetti({
-          particleCount: 25, spread: 60,
-          origin: { x: mousePos.x / window.innerWidth, y: mousePos.y / window.innerHeight },
-          colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
-        });
-      }
-      target.x = Math.max(40, Math.min(window.innerWidth - 40, target.x + (Math.random() - 0.5) * 400));
-      target.y = Math.max(40, Math.min(window.innerHeight - 40, target.y + (Math.random() - 0.5) * 300));
-    }
-    catEl.classList.toggle('sleep', Date.now() - lastMove > 4500);
-    requestAnimationFrame(loop);
-  }
-  loop();
-})();
-
-/* ==========================================================================
-   4. THE PLAN TIMELINE ANIMATION (GSAP 3 + SCROLLTRIGGER)
+   3. THE PLAN TIMELINE ANIMATION (GSAP 3 + SCROLLTRIGGER)
    ========================================================================== */
 (function setupPlanTimelineAnimation(){
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
@@ -1269,7 +1213,252 @@ window.addEventListener('scroll', () => {
 })();
 
 /* ==========================================================================
-   7. REAL-TIME COUNTDOWN & SEAT PROOF COUNTER
+   7. TICKER MARQUEE WITH SCROLL DIRECTION REVERSAL
+   ========================================================================== */
+(function setupTickerScrollDirection(){
+  const ticker = document.querySelector('.ticker');
+  const track = document.querySelector('.tk-track');
+  if (!ticker || !track) return;
+
+  let lastScrollY = window.scrollY;
+  let scrollVelocity = 0;
+  let currentDirection = 1; // 1 = right (normal), -1 = left (reversed)
+
+  // Track scroll velocity and direction
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - lastScrollY;
+    scrollVelocity = delta;
+    
+    // Reverse direction on scroll up
+    if (delta < -2) {
+      currentDirection = -1;
+    } else if (delta > 2) {
+      currentDirection = 1;
+    }
+    
+    lastScrollY = currentScrollY;
+  }, { passive: true });
+
+  // Update animation direction based on scroll
+  const updateAnimation = () => {
+    const baseDuration = 24;
+    const speedMultiplier = Math.min(Math.abs(scrollVelocity) / 20, 2); // Speed up on fast scroll
+    const adjustedDuration = baseDuration / (1 + speedMultiplier * 0.5);
+    
+    track.style.animationDirection = currentDirection === 1 ? 'normal' : 'reverse';
+    track.style.animationDuration = `${adjustedDuration}s`;
+    
+    requestAnimationFrame(updateAnimation);
+  };
+  
+  updateAnimation();
+})();
+
+/* ==========================================================================
+   9. MAGNETIC BUTTONS EFFECT
+   ========================================================================== */
+(function setupMagneticButtons(){
+  const buttons = document.querySelectorAll('.btn');
+  if (!buttons.length) return;
+
+  buttons.forEach(btn => {
+    btn.addEventListener('pointermove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      
+      // Move button toward cursor by a fraction of the distance
+      gsap.to(btn, {
+        x: x * 0.3,
+        y: y * 0.3,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+    });
+
+    btn.addEventListener('pointerleave', () => {
+      // Snap back to original position
+      gsap.to(btn, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: 'elastic.out(1, 0.3)'
+      });
+    });
+  });
+})();
+
+/* ==========================================================================
+   10. IMAGE MASK REVEAL FOR SPEAKER POLAROID
+   ========================================================================== */
+(function setupImageMaskReveal(){
+  const speakerSection = document.getElementById('speaker');
+  const polaroidPhoto = document.querySelector('.polaroid .ph');
+  if (!speakerSection || !polaroidPhoto) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Reveal image with clip-path animation
+        polaroidPhoto.style.clipPath = 'inset(0)';
+        
+        // Also scale down from 1.3 to 1
+        const img = polaroidPhoto.querySelector('img');
+        if (img) {
+          gsap.fromTo(img, 
+            { scale: 1.3 },
+            { scale: 1, duration: 1, ease: 'power2.out' }
+          );
+        }
+        
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(speakerSection);
+})();
+
+/* ==========================================================================
+   11. ENHANCED PARALLAX LAYERS IN HERO SECTION
+   ========================================================================== */
+(function setupHeroParallax(){
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  const hero = document.querySelector('.hero');
+  const heroGhost = document.getElementById('heroGhost');
+  const heroArt = document.getElementById('heroArt');
+  const stickers = [document.getElementById('st1'), document.getElementById('st2'), document.getElementById('st3')];
+  
+  if (!hero) return;
+
+  // Background layer: ghost text moves slower
+  if (heroGhost) {
+    gsap.to(heroGhost, {
+      y: 120,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+  }
+
+  // Midground layer: hero art moves at medium speed
+  if (heroArt) {
+    gsap.to(heroArt, {
+      y: -60,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+  }
+
+  // Foreground layer: stickers move faster for depth effect
+  stickers.forEach((sticker, i) => {
+    if (sticker) {
+      const speed = [80, 140, 50][i]; // Different speeds for each sticker
+      gsap.to(sticker, {
+        y: -speed,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        }
+      });
+    }
+  });
+})();
+
+/* ==========================================================================
+   12. STACKED CARDS FOR FUTURE EPISODES
+   ========================================================================== */
+(function setupStackedCards(){
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  const futureSection = document.querySelector('.future');
+  const cards = document.querySelectorAll('.ep');
+  if (!futureSection || !cards.length) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
+
+  cards.forEach((card, index) => {
+    // Each card scales down and dims as it gets stacked behind
+    gsap.to(card, {
+      scale: 1 - (index * 0.05),
+      opacity: 1 - (index * 0.15),
+      scrollTrigger: {
+        trigger: card,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: true
+      }
+    });
+  });
+})();
+
+/* ==========================================================================
+   13. LOOT SECTION — PINNED HORIZONTAL SCROLL
+   ========================================================================== */
+(function setupLootHorizontalScroll(){
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  const lootPinWrap = document.getElementById('lootPinWrap');
+  const lootSticky = document.getElementById('lootSticky');
+  const lootTrack = document.getElementById('lootTrack');
+  const lootHint = document.getElementById('lootHint');
+
+  if (!lootPinWrap || !lootSticky || !lootTrack) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
+
+  // Calculate scroll distance: track width - viewport width + padding
+  const trackWidth = lootTrack.offsetWidth;
+  const scrollDistance = Math.max(0, trackWidth - window.innerWidth + 200);
+
+  // Pin the section and convert vertical scroll to horizontal
+  ScrollTrigger.create({
+    trigger: lootPinWrap,
+    start: 'top top',
+    end: () => `+=${scrollDistance}`,
+    pin: lootSticky,
+    scrub: 1,
+    anticipatePin: 1,
+    onUpdate: (self) => {
+      // Move track horizontally based on scroll progress
+      const progress = self.progress;
+      const xOffset = -progress * scrollDistance;
+      gsap.set(lootTrack, { x: xOffset });
+
+      // Fade out hint as user scrolls
+      if (lootHint) {
+        gsap.set(lootHint, { opacity: 1 - progress * 3 });
+      }
+    }
+  });
+
+  // Refresh on resize
+  window.addEventListener('resize', () => {
+    ScrollTrigger.refresh();
+  });
+})();
+
+/* ==========================================================================
+   8. REAL-TIME COUNTDOWN & SEAT PROOF COUNTER
    ========================================================================== */
 const target = new Date('2025-10-06T14:00:00+05:30').getTime();
 const pad = n => String(n).padStart(2,'0');
