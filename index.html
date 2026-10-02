@@ -16,9 +16,10 @@
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
-<!-- GSAP + ScrollTrigger + Canvas Confetti CDNs -->
+<!-- GSAP + ScrollTrigger + Lenis (smooth scroll) + Canvas Confetti -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
 <style>
@@ -27,9 +28,15 @@
   --blue:#4285F4; --red:#EA4335; --yellow:#FBBC05; --green:#34A853;
   --royal:#2A3EB1; --navy:#0E1633; --ink:#101433; --paper:#FAF7EF;
   --grid-l:rgba(16,20,51,.08); --grid-d:rgba(255,255,255,.10);
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+  /* reveal uses opacity + individual `translate`, so it never fights with a component's own transform */
+  --rt:opacity .7s ease var(--d,0s), translate .85s cubic-bezier(.2,.8,.2,1) var(--d,0s);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
 body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.5;text-rendering:optimizeLegibility}
 ::selection{background:var(--yellow);color:var(--ink)}
 img{max-width:100%;display:block}
@@ -38,18 +45,16 @@ h1,h2,h3,.disp{font-family:'Archivo Black',sans-serif;letter-spacing:-.02em;line
 .hand{font-family:'Caveat',cursive;text-transform:none;letter-spacing:0}
 .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
 .gridbg{background-image:linear-gradient(var(--g,var(--grid-l)) 1px,transparent 1px),linear-gradient(90deg,var(--g,var(--grid-l)) 1px,transparent 1px);background-size:44px 44px}
-.os{box-shadow:6px 6px 0 var(--ink)}
-.os-y{box-shadow:9px 9px 0 var(--yellow)}
-.os-w{box-shadow:9px 9px 0 rgba(255,255,255,.92)}
 .hl{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 94%,transparent 94%);padding:0 .12em}
 .hl-w{background:linear-gradient(transparent 58%,rgba(255,255,255,.9) 58%,rgba(255,255,255,.9) 94%,transparent 94%);padding:0 .12em}
+a:focus-visible,button:focus-visible{outline:3px solid var(--royal);outline-offset:3px}
 
 /* Top Progress Bar */
-#scroll-progress{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg, #ea4335 0%, #4285f4 33%, #fbbc04 66%, #34a853 100%);transform-origin:left center;transform:scaleX(0);z-index:10000;pointer-events:none;will-change:transform}
+#scroll-progress{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#ea4335 0%,#4285f4 33%,#fbbc04 66%,#34a853 100%);transform-origin:left center;transform:scaleX(0);z-index:10000;pointer-events:none;will-change:transform}
 
 /* Reveal */
-.rev{opacity:0;transform:translateY(26px) rotate(var(--rr,0deg));transition:opacity .6s ease var(--d,0s),transform .6s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
-.rev.in{opacity:1;transform:translateY(0) rotate(var(--r,0deg))}
+.rev{opacity:0;translate:0 28px;transition:var(--rt)}
+.rev.in{opacity:1;translate:0 0}
 
 /* Section label */
 .lab{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase}
@@ -58,91 +63,129 @@ h1,h2,h3,.disp{font-family:'Archivo Black',sans-serif;letter-spacing:-.02em;line
 .sec-head h2{font-size:clamp(2rem,5.4vw,3.6rem)}
 .sec-head .hand{font-size:clamp(1.2rem,2.6vw,1.7rem);transform:rotate(-2deg)}
 
-/* Buttons & chips */
-.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.5rem;border:2px solid var(--ink);border-radius:999px;background:var(--yellow);color:var(--ink);font:700 1rem 'Space Grotesk';cursor:pointer;text-decoration:none;box-shadow:4px 4px 0 var(--ink);transition:transform .15s,box-shadow .15s,background .2s}
-.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
-.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-.btn.done{background:var(--green);color:#fff}
+/* Buttons & chips — hover uses `translate` so GSAP's magnetic `transform` composes smoothly */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;padding:.95rem 1.5rem;border:2.5px solid var(--ink);border-radius:999px;background:var(--yellow);color:var(--ink);font:700 1rem 'Space Grotesk';cursor:pointer;text-decoration:none;box-shadow:4px 4px 0 var(--ink);transition:translate .18s var(--ease-out),box-shadow .18s var(--ease-out),background .2s;will-change:transform}
+.btn:hover{translate:-2px -2px;box-shadow:7px 7px 0 var(--ink)}
+.btn:active{translate:3px 3px;box-shadow:0 0 0 var(--ink)}
 .btn-ink{background:var(--ink);color:var(--paper)}
 .btn-royal{background:var(--royal);color:#fff}
+.btn-red{background:var(--red);color:#fff}
 .btn-white{background:#fff}
-.btn-sm{padding:.55rem 1rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
+.btn-lg{padding:1.1rem 1.8rem;font-size:1.08rem}
+.btn-sm{padding:.55rem 1.05rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
 .chip{display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--ink);background:#fff;border-radius:999px;padding:.5rem 1rem;font-weight:700;font-size:.92rem}
 .chip svg{flex:none}
 
+/* attention bounce (wrapper animates, button keeps its own hover/magnetic transforms) */
+.bob{display:inline-block;animation:bob 2.2s ease-in-out infinite}
+.bob:hover{animation-play-state:paused}
+@keyframes bob{0%,22%,52%,100%{transform:translateY(0)}34%{transform:translateY(-14px)}44%{transform:translateY(-5px)}}
+.ringed{animation:ring 1.8s ease-out infinite}
+@keyframes ring{0%{box-shadow:4px 4px 0 var(--ink),0 0 0 0 rgba(234,67,53,.55)}80%,100%{box-shadow:4px 4px 0 var(--ink),0 0 0 20px rgba(234,67,53,0)}}
+.ringed-y{animation:ringy 1.8s ease-out infinite}
+@keyframes ringy{0%{box-shadow:4px 4px 0 var(--ink),0 0 0 0 rgba(251,188,5,.7)}80%,100%{box-shadow:4px 4px 0 var(--ink),0 0 0 22px rgba(251,188,5,0)}}
+
 /* ============ NAV ============ */
-nav{position:sticky;top:0;z-index:90;background:var(--paper);border-bottom:2px solid var(--ink)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem 22px;max-width:1140px;margin:0 auto}
-.logo{display:flex;align-items:center;gap:.6rem;font-family:'Archivo Black';font-size:1.05rem;text-decoration:none}
+nav{position:sticky;top:0;z-index:90;background:rgba(250,247,239,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:3px solid var(--ink)}
+nav::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:6px;border-bottom:3px solid var(--ink);background:linear-gradient(90deg,var(--blue) 0 25%,var(--red) 25% 50%,var(--yellow) 50% 75%,var(--green) 75% 100%);pointer-events:none}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.65rem 22px;max-width:1140px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:'Archivo Black';font-size:1rem;text-decoration:none;background:#fff;border:2.5px solid var(--ink);padding:.3rem .8rem .3rem .55rem;box-shadow:4px 4px 0 var(--ink);transition:translate .18s var(--ease-out),box-shadow .18s var(--ease-out)}
+.logo:hover{translate:-2px -2px;box-shadow:6px 6px 0 var(--ink)}
 .logo .sq{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:22px;height:22px}
 .logo .sq i{border-radius:3px}
-.nav-links{display:flex;gap:1.6rem;font-weight:700;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase}
-.nav-links a{text-decoration:none;position:relative}
-.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:4px;background:var(--yellow);transition:right .25s}
-.nav-links a:hover::after{right:0}
-@media(max-width:820px){.nav-links{display:none}}
+.nav-links{display:flex;gap:.25rem;font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+.nav-links a{text-decoration:none;padding:.4rem .7rem;border:2px solid transparent;border-radius:999px;transition:background .2s,color .2s,border-color .2s,box-shadow .2s,translate .2s var(--ease-out)}
+.nav-links a:nth-child(4n+1){--c:var(--blue);--t:#fff}
+.nav-links a:nth-child(4n+2){--c:var(--red);--t:#fff}
+.nav-links a:nth-child(4n+3){--c:var(--yellow);--t:var(--ink)}
+.nav-links a:nth-child(4n+4){--c:var(--green);--t:#fff}
+.nav-links a:hover,.nav-links a.active{background:var(--c);color:var(--t);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink);translate:-1px -1px}
+.nav-right{display:flex;align-items:center;gap:.8rem}
+.nav-live{display:inline-flex;align-items:center;gap:.45rem;font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:.3rem .7rem}
+.nav-live i{width:9px;height:9px;border-radius:50%;background:var(--green);animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25;transform:scale(.8)}}
+@media(max-width:1060px){.nav-live{display:none}}
+@media(max-width:900px){.nav-links{display:none}}
 
-/* ============ HERO (ORIENTATION AT START) ============ */
-header.hero{position:relative;padding:3.5rem 0 4.2rem;overflow:hidden}
-.ghost{position:absolute;top:4%;right:-3%;font-family:'Archivo Black';font-size:24vw;color:transparent;-webkit-text-stroke:2px rgba(16,20,51,.07);pointer-events:none;user-select:none;will-change:transform}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center;position:relative}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+/* ============ HERO ============ */
+header.hero{position:relative;padding:3rem 0 4.4rem;overflow:hidden}
+.ghost{position:absolute;top:2%;right:-2%;font-family:'Archivo Black';font-size:clamp(9rem,25vw,22rem);line-height:.9;opacity:.5;pointer-events:none;user-select:none;will-change:transform;z-index:0;white-space:nowrap}
+.ghost span{-webkit-text-stroke:3px var(--ink)}
+.ghost .g1{color:var(--blue)}.ghost .g2{color:var(--red)}.ghost .g3{color:var(--yellow)}
+.hero .wrap{position:relative;z-index:1}
 .kick{font-weight:700;letter-spacing:.24em;font-size:.78rem;text-transform:uppercase;display:flex;align-items:center;gap:.6rem}
 .kick b{color:var(--royal)}
 
-h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:relative;display:inline-block;line-height:0.88}
-.hero-word{display:inline-block;will-change:transform, opacity}
-.hl-bar{position:absolute;left:-2%;right:-3%;bottom:0.04em;height:0.18em;background:var(--yellow);transform:rotate(-1.2deg) scaleX(0);transform-origin:left center;z-index:-1;will-change:transform}
+h1.mega{font-size:clamp(2.2rem,10.2vw,8.6rem);margin:.7rem 0 1.6rem;position:relative;display:inline-block;line-height:.95;white-space:nowrap;max-width:100%}
+.ch{display:inline-block;will-change:transform}
+.hl-bar{position:absolute;left:-1.5%;right:-1.5%;bottom:.02em;height:.2em;background:var(--yellow);border:3px solid var(--ink);transform:rotate(-1deg) scaleX(0);transform-origin:left center;z-index:-1;will-change:transform}
 
-.hero-sub{font-size:clamp(1.05rem,2.2vw,1.3rem);font-weight:500;max-width:34ch;margin:1rem 0 1.4rem}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2.4rem;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr}}
+.hero-sub{font-size:clamp(1.05rem,2.2vw,1.3rem);font-weight:500;max-width:36ch}
 .hero-sub b{background:var(--ink);color:var(--yellow);padding:0 .3em}
-.chips{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.6rem}
-.hero-cta{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
-.hand-note{font-size:1.5rem;transform:rotate(-3deg);color:var(--royal)}
+
+/* ticket-style info cards */
+.info-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;max-width:600px;margin:1.6rem 0 1.8rem}
+.ic{position:relative;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:.65rem .8rem .8rem;rotate:var(--ir,0deg);transition:rotate .3s var(--ease-out),translate .3s var(--ease-out),box-shadow .3s var(--ease-out);will-change:transform}
+.ic:hover{rotate:0deg;translate:-3px -3px;box-shadow:9px 9px 0 var(--ink)}
+.ic small{display:block;font-weight:700;font-size:.62rem;letter-spacing:.22em;padding-bottom:.35rem;border-bottom:2px dashed currentColor;opacity:.9}
+.ic b{display:block;font-family:'Archivo Black';font-size:clamp(1.7rem,3.6vw,2.6rem);line-height:1;margin:.5rem 0 .25rem;letter-spacing:-.02em}
+.ic span{display:block;font-weight:700;font-size:.78rem;line-height:1.25}
+.ic::before,.ic::after{content:"";position:absolute;top:calc(1.6rem + 4px);width:12px;height:12px;background:var(--paper);border:3px solid var(--ink);border-radius:50%}
+.ic::before{left:-9px}.ic::after{right:-9px}
+.ic-date{background:var(--blue);color:#fff;--ir:-2deg}
+.ic-time{background:var(--yellow);color:var(--ink);--ir:1.2deg}
+.ic-venue{background:var(--green);color:#fff;--ir:-1deg}
+
+.hero-cta{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center}
+.hand-note{font-size:1.5rem;transform:rotate(-3deg);color:var(--royal);margin-top:.9rem}
 .hand-note svg{vertical-align:middle}
 
 /* countdown */
-.cd{display:flex;gap:.7rem;margin:1.8rem 0 1.2rem;flex-wrap:wrap}
-.cd .box{background:#fff;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.65rem .95rem .5rem;min-width:82px;text-align:center}
-.cd .box b{font-family:'Archivo Black';font-size:1.85rem;display:block;line-height:1}
+.cd{display:flex;gap:.7rem;margin:1.6rem 0 1.3rem;flex-wrap:wrap}
+.cd .box{border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.6rem .9rem .5rem;min-width:78px;text-align:center;color:#fff}
+.cd .box:nth-child(1){background:var(--blue)}
+.cd .box:nth-child(2){background:var(--red)}
+.cd .box:nth-child(3){background:var(--yellow);color:var(--ink)}
+.cd .box:nth-child(4){background:var(--green)}
+.cd .box b{font-family:'Archivo Black';font-size:1.85rem;display:block;line-height:1;font-variant-numeric:tabular-nums}
 .cd .box span{font-size:.65rem;font-weight:700;letter-spacing:.2em}
-.cd-live{display:none;font-family:'Archivo Black';font-size:1.4rem;background:var(--red);color:#fff;border:2px solid var(--ink);padding:.8rem 1.2rem;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--ink);will-change:transform}
+.cd-live{display:none;font-family:'Archivo Black';font-size:1.3rem;background:var(--red);color:#fff;border:3px solid var(--ink);padding:.8rem 1.2rem;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--ink)}
 
 /* seats */
 .seats{max-width:460px}
 .seats .row{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem;margin-bottom:.4rem}
 .seats .row b{font-family:'Archivo Black'}
-.track{height:20px;border:2px solid var(--ink);background:#fff;overflow:hidden}
-.fill{height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--blue) 0 14px,var(--red) 14px 28px,var(--yellow) 28px 42px,var(--green) 42px 56px);will-change:width}
-.seats small{display:block;margin-top:.4rem;font-weight:500;opacity:.75}
+.track{height:22px;border:3px solid var(--ink);background:#fff;overflow:hidden;box-shadow:3px 3px 0 var(--ink)}
+.fill{height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--blue) 0 14px,var(--red) 14px 28px,var(--yellow) 28px 42px,var(--green) 42px 56px);transition:width 1.4s var(--ease-out)}
+.seats small{display:block;margin-top:.5rem;font-weight:500;opacity:.75}
 
 /* hero art */
-.hero-art{position:relative;justify-self:center;width:min(420px,90%);perspective:900px;cursor:pointer}
-.mega-wrap{width:100%;transform-origin:35% 55%;will-change:transform}
-.hero-art .mega-svg{width:100%;filter:drop-shadow(8px 8px 0 rgba(16,20,51,.15));will-change:transform}
-.sw{transform-origin:120px 80px;will-change:transform, opacity}
-.sticker{position:absolute;border:2px solid var(--ink);border-radius:999px;padding:.5rem 1rem;font-family:'Archivo Black';font-size:.85rem;background:#fff;--sh:0px;box-shadow:var(--sh) var(--sh) 0 var(--ink);will-change:transform, box-shadow;transform-origin:center center}
-.st1{top:2%;left:-4%;background:var(--red);color:#fff}
-.st2{bottom:14%;right:-6%;background:var(--yellow)}
-.st3{bottom:-4%;left:8%;background:var(--green);color:#fff}
-.cf{position:absolute;pointer-events:none;animation:float 6s ease-in-out infinite}
+.hero-art{position:relative;justify-self:center;width:min(430px,92%);aspect-ratio:1/1;cursor:pointer;display:grid;place-items:center}
+.art-bg{position:absolute;inset:3% 4%;background:var(--royal);border:4px solid var(--ink);box-shadow:12px 12px 0 var(--ink);transform:rotate(-3deg);--g:var(--grid-d)}
+.mega-wrap{position:relative;width:88%;will-change:transform}
+.hero-art .mega-svg{width:100%;overflow:visible;filter:drop-shadow(6px 6px 0 rgba(0,0,0,.35));transform-origin:40% 60%;will-change:transform}
+.sw{transform-box:fill-box;transform-origin:left center;will-change:transform,opacity}
+.sticker{position:absolute;border:2.5px solid var(--ink);border-radius:999px;padding:.5rem 1rem;font-family:'Archivo Black';font-size:.85rem;background:#fff;--sh:0px;box-shadow:var(--sh) var(--sh) 0 var(--ink);will-change:transform,box-shadow;transform-origin:center center;white-space:nowrap}
+.st1{top:0;left:-4%;background:var(--red);color:#fff}
+.st2{bottom:16%;right:-5%;background:var(--yellow)}
+.st3{bottom:-3%;left:6%;background:var(--green);color:#fff}
+.cf{position:absolute;pointer-events:none;animation:float 6s ease-in-out infinite;z-index:1}
 @keyframes float{50%{transform:translateY(-14px) rotate(12deg)}}
 
-
 /* ============ TICKER ============ */
-.ticker{background:var(--yellow);border-block:2px solid var(--ink);overflow:hidden}
-.tk-track{display:flex;width:max-content;animation:tick 24s linear infinite}
-.tk-track:hover{animation-play-state:paused}
+.ticker{background:var(--yellow);border-block:3px solid var(--ink);overflow:hidden}
+.tk-track{display:flex;width:max-content;will-change:transform}
 .tk-g{display:flex;align-items:center;gap:2.4rem;padding:.75rem 1.2rem .75rem 2.4rem}
 .tk-g span{font-family:'Archivo Black';font-size:1rem;letter-spacing:.05em;white-space:nowrap}
 .tk-g i{font-style:normal;font-size:1.1rem}
-@keyframes tick{to{transform:translateX(-50%)}}
 
 /* ============ SPEAKER ============ */
 .speaker{background:var(--royal);--g:var(--grid-d);color:#fff;padding:5rem 0;position:relative;overflow:hidden}
 .sp-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:3.4rem;align-items:center}
 @media(max-width:900px){.sp-grid{grid-template-columns:1fr}}
-.polaroid{position:relative;background:#fff;border:2px solid var(--ink);padding:12px 12px 0;transform:rotate(-2.5deg);max-width:380px;margin:auto;box-shadow:8px 8px 0 rgba(0,0,0,0.4);transition:transform .3s ease-out}
+.polaroid{position:relative;background:#fff;border:2px solid var(--ink);padding:12px 12px 0;transform:rotate(-2.5deg);max-width:380px;margin:auto;box-shadow:8px 8px 0 rgba(0,0,0,0.4);transition:transform .4s var(--ease-out)}
 .polaroid:hover{transform:rotate(0deg) scale(1.03)}
 .polaroid .ph{aspect-ratio:4/5;overflow:hidden;background:var(--navy);position:relative;border:2px solid var(--ink);clip-path:inset(0 0 100% 0);transition:clip-path 1s cubic-bezier(0.77,0,0.175,1)}
 .polaroid img{width:100%;height:100%;object-fit:cover;position:relative;z-index:2}
@@ -160,24 +203,24 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 /* ============ PERKS BENTO ============ */
 .perks{padding:5rem 0}
 .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1.3rem}
-.card{border:2px solid var(--ink);background:#fff;padding:1.6rem;position:relative;transition:transform .25s,box-shadow .25s;box-shadow:5px 5px 0 var(--ink)}
-.card:hover{transform:translate(-3px,-3px) rotate(0deg)!important;box-shadow:9px 9px 0 var(--ink)}
+.card{border:2px solid var(--ink);background:#fff;padding:1.6rem;position:relative;box-shadow:5px 5px 0 var(--ink);transform:rotate(var(--r,0deg));transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),var(--rt)}
+.card:hover{transform:translate(-3px,-3px) rotate(0deg);box-shadow:9px 9px 0 var(--ink)}
 .card h3{font-size:clamp(1.3rem,2.6vw,1.8rem);margin-bottom:.6rem}
 .card p{font-weight:500;font-size:.98rem}
 .card .ico{position:absolute;top:1.1rem;right:1.1rem;transform:rotate(8deg)}
 .card .stat{display:inline-block;margin-top:.9rem;font-family:'Archivo Black';font-size:.8rem;border:2px solid var(--ink);padding:.25rem .7rem;background:var(--yellow)}
-.c-a{grid-column:span 4;background:var(--blue);color:#fff;transform:rotate(-1deg)}
+.c-a{grid-column:span 4;background:var(--blue);color:#fff}
 .c-a .stat{background:#fff;color:var(--ink)}
-.c-b{grid-column:span 2;background:var(--red);color:#fff;transform:rotate(1.4deg)}
-.c-c{grid-column:span 2;background:var(--yellow);transform:rotate(-1.2deg)}
-.c-d{grid-column:span 4;background:var(--green);color:#fff;transform:rotate(.8deg)}
+.c-b{grid-column:span 2;background:var(--red);color:#fff}
+.c-c{grid-column:span 2;background:var(--yellow)}
+.c-d{grid-column:span 4;background:var(--green);color:#fff}
 @media(max-width:820px){.bento .card{grid-column:span 6!important}}
 
 /* ============ FUTURE (NEO-BRUTALISM) ============ */
 .future{padding:5rem 0;background:var(--paper);position:relative}
 .eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;position:relative}
 @media(max-width:820px){.eps{grid-template-columns:1fr}}
-.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--er));transition:transform .25s,box-shadow .25s;position:sticky;top:8rem}
+.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--r,0deg));transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),var(--rt)}
 .ep:hover{transform:rotate(0) translateY(-6px);box-shadow:12px 12px 0 var(--ec)}
 .ep .bar{height:14px;background:var(--ec);border-bottom:3px solid var(--ink)}
 .ep .in{padding:1.4rem}
@@ -187,18 +230,17 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 
 /* ============ THE PLAN TIMELINE SECTION ============ */
 .plan{background:var(--navy);--g:var(--grid-d);color:#fff;padding:5.5rem 0;position:relative;overflow:hidden;overflow-x:clip}
-.plan-line{position:absolute;left:calc(120px + 17px);top:0;bottom:0;width:4px;background:linear-gradient(180deg, var(--blue), var(--red), var(--yellow), var(--green), var(--royal));border-radius:4px;box-shadow:0 0 12px rgba(66,133,244,0.6);transform-origin:top center;transform:scaleY(0);z-index:1}
+.plan-line{position:absolute;left:calc(120px + 17px);top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--blue),var(--red),var(--yellow),var(--green),var(--royal));border-radius:4px;box-shadow:0 0 12px rgba(66,133,244,0.6);transform-origin:top center;transform:scaleY(0);z-index:1}
 .plan .rows{list-style:none;max-width:920px;position:relative;z-index:2}
-.plan .timeline-row{display:grid;grid-template-columns:120px 34px 1fr;gap:1.2rem;padding:1.6rem 0;position:relative;align-items:center;will-change:transform, opacity}
+.plan .timeline-row{display:grid;grid-template-columns:120px 34px 1fr;gap:1.2rem;padding:1.6rem 0;position:relative;align-items:center;will-change:transform,opacity}
 .plan .time-pill{display:inline-block;border:2.5px solid #fff;border-radius:10px;padding:6px 14px;font-family:'Archivo Black',sans-serif;font-size:1.25rem;box-shadow:4px 4px 0 rgba(0,0,0,0.5);text-align:center;will-change:transform;transform-origin:center center}
 .plan .dot-wrap{position:relative;display:flex;justify-content:center;align-items:center;height:42px}
 .plan .dot-ring{width:22px;height:22px;border-radius:50%;background:var(--tc);border:3.5px solid #fff;box-shadow:0 0 0 2.5px var(--tc);will-change:transform;transform-origin:center center}
-.plan .dot-pulse{position:absolute;width:22px;height:22px;border-radius:50%;border:2.5px solid var(--tc);pointer-events:none;opacity:0;will-change:transform, opacity}
+.plan .dot-pulse{position:absolute;width:22px;height:22px;border-radius:50%;border:2.5px solid var(--tc);pointer-events:none;opacity:0;will-change:transform,opacity}
 .plan .row-body b{font-size:1.2rem;font-weight:800;color:#fff;display:block}
 .plan .row-body small{font-size:0.98rem;font-weight:500;color:rgba(255,255,255,0.82)}
-.plan .hand-tag{display:inline-block;background:var(--yellow);color:#101433;border:2px solid #fff;border-radius:8px;padding:3px 12px;font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;box-shadow:4px 4px 0 rgba(0,0,0,0.6);margin-left:10px;margin-top:4px;will-change:transform, opacity}
+.plan .hand-tag{display:inline-block;background:var(--yellow);color:#101433;border:2px solid #fff;border-radius:8px;padding:3px 12px;font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;box-shadow:4px 4px 0 rgba(0,0,0,0.6);margin-left:10px;margin-top:4px;will-change:transform,opacity}
 .plan .row-sep{position:absolute;left:0;right:0;bottom:0;height:2px;border-bottom:2.5px dashed rgba(255,255,255,0.22);transform-origin:left center;transform:scaleX(0);will-change:transform}
-
 @media(max-width:699px){
   .plan .timeline-row{grid-template-columns:78px 24px 1fr;gap:0.8rem}
   .plan-line{left:calc(78px + 12px)}
@@ -207,32 +249,30 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 
 /* ============ DEVCON STAGE SHOWCASE ============ */
 .devcon-showcase{background:#07060e;color:#fff;padding:5rem 0;border-block:2px solid var(--ink)}
-.devcon-window-frame{position:relative;width:min(940px, 92vw);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:4px solid #221c33;box-shadow:0 25px 80px rgba(0,0,0,0.8);margin:0 auto}
-.shutter-blind{position:absolute;left:0;right:0;height:4.2%;background:linear-gradient(180deg, #3d2212 0%, #1a0f07 60%, #3d2212 100%);border-bottom:1.5px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 3px 6px rgba(0,0,0,0.8);transform-origin:top center;transition:transform 1.4s cubic-bezier(0.77, 0, 0.175, 1);z-index:2}
+.devcon-window-frame{position:relative;width:min(940px,92vw);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:4px solid #221c33;box-shadow:0 25px 80px rgba(0,0,0,0.8);margin:0 auto}
+.shutter-blind{position:absolute;left:0;right:0;height:4.2%;background:linear-gradient(180deg,#3d2212 0%,#1a0f07 60%,#3d2212 100%);border-bottom:1.5px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 3px 6px rgba(0,0,0,0.8);transform-origin:top center;transition:transform 1.4s cubic-bezier(0.77,0,0.175,1);z-index:2;will-change:transform}
 .shutter-open .shutter-blind{transform:scaleY(0.04) translateY(-900%)}
 
 /* ============ LOOT — PINNED HORIZONTAL SCROLL ============ */
 .loot{padding:0;overflow:hidden;background:var(--paper)}
-.loot-pin-wrap{overflow:hidden}
-.loot-sticky{display:flex;flex-direction:column;justify-content:center;height:100vh;padding:3rem 0;will-change:transform}
+.loot-pin-wrap{overflow:hidden;height:100vh}
+.loot-sticky{display:flex;flex-direction:column;justify-content:center;height:100%;padding:3rem 0}
 .loot-header{text-align:center;padding:0 22px;margin-bottom:2.4rem;flex-shrink:0}
 .loot-scroll-area{overflow:hidden;width:100%;flex-shrink:0}
-.loot-track{display:flex;gap:1.4rem;padding:0.4rem 6vw;width:max-content;will-change:transform}
-.loot-card{border:2px solid var(--ink);background:#fff;padding:1.4rem 1.2rem 1.2rem;text-align:center;box-shadow:5px 5px 0 var(--ink);transition:transform .25s,box-shadow .25s;transform:rotate(var(--lr,0deg));width:min(240px,70vw);flex-shrink:0}
+.loot-track{display:flex;gap:1.4rem;padding:0.4rem 6vw 1rem;width:max-content;will-change:transform}
+.loot-card{border:2px solid var(--ink);background:#fff;padding:1.4rem 1.2rem 1.2rem;text-align:center;box-shadow:5px 5px 0 var(--ink);transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out);transform:rotate(var(--lr,0deg));width:min(240px,70vw);flex-shrink:0}
 .loot-card:hover{transform:rotate(0) translateY(-8px);box-shadow:8px 10px 0 var(--lc,var(--ink))}
 .loot-card svg{width:90px;height:90px;margin:0 auto .8rem}
 .loot-card b{font-family:'Archivo Black';font-size:1rem;display:block}
 .loot-card small{font-weight:600;opacity:.7;font-size:.8rem}
-.loot-note{display:flex;flex-wrap:wrap;align-items:center;gap:1.2rem;justify-content:center;padding:1.6rem 22px 0;flex-shrink:0}
 .burst{width:110px;height:110px;animation:spin 14s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loot-note .big{font-family:'Archivo Black';font-size:clamp(1.2rem,3vw,2rem)}
 .loot-scroll-hint{text-align:center;padding-top:1rem;font-size:.82rem;font-weight:700;letter-spacing:.14em;opacity:.55;flex-shrink:0}
 
-/* ============ 3D DEVCON PASS SECTION (HORIZONTAL LAYOUT) ============ */
+/* ============ 3D DEVCON PASS SECTION ============ */
 .pass-section{position:relative;background:#0b0a16;color:#fff;padding:5.5rem 0;overflow:hidden}
-.pass-stage{position:relative;width:min(740px, 92vw);aspect-ratio:16/9.6;margin:3rem auto 2rem;perspective:1000px;transform-style:preserve-3d;cursor:grab}
-.pass-fan-card{position:absolute;inset:0;border-radius:20px;overflow:hidden;border:2.5px solid rgba(255,255,255,0.45);background:#070913;box-shadow:0 30px 80px rgba(0,0,0,0.85), 0 0 35px rgba(66,133,244,0.3);transform-origin:bottom center;transition:transform 0.15s ease-out}
+.pass-stage{position:relative;width:min(740px,92vw);aspect-ratio:16/9.6;margin:3rem auto 2rem;perspective:1000px;transform-style:preserve-3d;cursor:grab;will-change:transform}
+.pass-fan-card{position:absolute;inset:0;border-radius:20px;overflow:hidden;border:2.5px solid rgba(255,255,255,0.45);background:#070913;box-shadow:0 30px 80px rgba(0,0,0,0.85),0 0 35px rgba(66,133,244,0.3);transform-origin:bottom center}
 .pass-fan-card img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 
 /* ============ STORY / INSTA ============ */
@@ -242,7 +282,7 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 .story h2{font-size:clamp(2rem,5vw,3.4rem);margin:.8rem 0 1rem}
 .story p.lead{font-size:1.08rem;font-weight:500;max-width:40ch;margin-bottom:1.4rem}
 .cap-box{background:#fff;color:var(--ink);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--yellow);padding:1.1rem 1.2rem;font-size:.92rem;font-weight:500;white-space:pre-line;max-width:440px;margin-bottom:1.1rem}
-.phone{justify-self:center;width:min(330px,86%);aspect-ratio:9/16;border:3px solid var(--ink);border-radius:26px;background:var(--navy);--g:var(--grid-d);padding:20px 18px;display:flex;flex-direction:column;justify-content:space-between;transform:rotate(3deg);box-shadow:12px 12px 0 var(--yellow);position:relative;transition:transform .2s ease-out}
+.phone{justify-self:center;width:min(330px,86%);aspect-ratio:9/16;border:3px solid var(--ink);border-radius:26px;background:var(--navy);--g:var(--grid-d);padding:20px 18px;display:flex;flex-direction:column;justify-content:space-between;rotate:3deg;box-shadow:12px 12px 0 var(--yellow);position:relative}
 .phone .dots{display:flex;gap:6px}
 .phone .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
 .phone .pdate{font-family:'Archivo Black';font-size:3.4rem;color:var(--yellow);line-height:1}
@@ -262,8 +302,8 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 .fine{margin-top:1.4rem;font-weight:700;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
 
 /* ============ FOOTER ============ */
-footer{background:var(--ink);color:rgba(255,255,255,.82);padding:3.4rem 0 2rem}
-.fbar{display:flex;height:10px}
+footer{background:var(--ink);color:rgba(255,255,255,.82);padding:3.4rem 0 5.5rem}
+.fbar{display:flex;height:10px;margin-top:-3.4rem;margin-bottom:0}
 .fbar i{flex:1}
 .f-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2rem;margin-top:2.6rem}
 @media(max-width:760px){.f-grid{grid-template-columns:1fr}}
@@ -272,13 +312,21 @@ footer a{text-decoration:none;display:block;padding:.22rem 0;font-weight:500}
 footer a:hover{color:var(--yellow)}
 .f-bot{margin-top:2.6rem;border-top:1px dashed rgba(255,255,255,.25);padding-top:1.2rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;font-size:.82rem}
 
+/* ============ FLOATING REGISTER BUTTON (always visible) ============ */
+.fab{position:fixed;right:22px;bottom:22px;z-index:9000;transform:translateY(180%);opacity:0;transition:transform .8s cubic-bezier(.34,1.56,.64,1),opacity .4s ease;pointer-events:none}
+.fab.show{transform:none;opacity:1;pointer-events:auto}
+.fab .btn{font-size:1rem;padding:1rem 1.5rem;background:var(--red);color:#fff}
+.fab .pip{width:10px;height:10px;border-radius:50%;background:var(--yellow);border:2px solid var(--ink);animation:blink 1s ease-in-out infinite}
+@media(max-width:600px){.fab{left:14px;right:14px;bottom:14px}.fab .bob,.fab .btn{display:flex;width:100%}}
+
 /* Toast */
-#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,140%);background:var(--ink);color:#fff;border:2.5px solid var(--yellow);padding:.9rem 1.4rem;font-weight:700;border-radius:999px;box-shadow:6px 6px 0 rgba(0,0,0,.4);transition:transform .45s cubic-bezier(.2,.8,.2,1);z-index:10001;max-width:90vw;text-align:center}
+#toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-220%);background:var(--ink);color:#fff;border:2.5px solid var(--yellow);padding:.9rem 1.4rem;font-weight:700;border-radius:999px;box-shadow:6px 6px 0 rgba(0,0,0,.4);transition:transform .5s cubic-bezier(.34,1.56,.64,1);z-index:10001;max-width:90vw;text-align:center}
 #toast.show{transform:translate(-50%,0)}
 
 @media(prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
-  .rev{opacity:1;transform:none}
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rev{opacity:1;translate:none}
+  .fab{transform:none;opacity:1;pointer-events:auto}
 }
 </style>
 </head>
@@ -291,75 +339,80 @@ footer a:hover{color:var(--yellow)}
 <nav>
   <div class="nav-in">
     <a class="logo" href="#top"><span class="sq"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></span>GDG&nbsp;LTCE</a>
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
       <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#devcon">DevCon</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Story</a>
     </div>
-    <button class="btn btn-sm btn-claim">Claim seat</button>
+    <div class="nav-right">
+      <span class="nav-live"><i></i>Free entry</span>
+      <a class="btn btn-sm btn-red ringed btn-claim" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim seat →</a>
+    </div>
   </div>
 </nav>
 
-<!-- HERO (ORIENTATION AT START) -->
+<!-- HERO -->
 <header class="hero gridbg" id="top">
-  <div class="ghost" id="heroGhost" aria-hidden="true">GDG</div>
-  <svg class="cf" style="top:12%;left:4%;width:34px" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)"/></svg>
-  <svg class="cf" style="top:64%;left:46%;width:26px;animation-delay:1.2s" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--green)"/></svg>
-  <svg class="cf" style="top:20%;right:8%;width:40px;animation-delay:.6s" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--blue)" stroke-width="5"/></svg>
-  <div class="wrap hero-grid" id="heroGrid">
-    <div>
-      <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
-      <h1 class="mega" id="heroMega">
-        <span class="hero-word" id="wordOrien">ORIEN-</span><br>
-        <span class="hero-word" id="wordTation">TATION</span>
-        <span class="hl-bar" id="heroHlBar"></span>
-      </h1>
-      <p class="hero-sub" id="heroSub">You want <b>skills that show</b>, <b>a crew that builds</b>, <b>swag that flexes</b>. We packed all three into one afternoon.</p>
-      <div class="chips" id="heroChips">
-        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mon · 6 Oct</span>
-        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>2:00 – 4:30 PM</span>
-        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>A510 Auditorium</span>
+  <div class="ghost" id="heroGhost" aria-hidden="true"><span class="g1">G</span><span class="g2">D</span><span class="g3">G</span></div>
+  <svg class="cf" style="top:12%;left:3%;width:34px" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)"/></svg>
+  <svg class="cf" style="top:70%;left:48%;width:26px;animation-delay:1.2s" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--green)"/></svg>
+  <svg class="cf" style="top:20%;right:5%;width:40px;animation-delay:.6s" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--blue)" stroke-width="5"/></svg>
+
+  <div class="wrap" id="heroGrid">
+    <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
+    <h1 class="mega" id="heroMega" aria-label="Orientation"><span id="megaText" aria-hidden="true">ORIENTATION</span><span class="hl-bar" id="heroHlBar"></span></h1>
+
+    <div class="hero-grid">
+      <div>
+        <p class="hero-sub" id="heroSub">You want <b>skills that show</b>, <b>a crew that builds</b>, <b>swag that flexes</b>. We packed all three into one afternoon.</p>
+
+        <div class="info-row" id="heroInfo">
+          <div class="ic ic-date"><small>DATE</small><b>06</b><span>OCT · MONDAY</span></div>
+          <div class="ic ic-time"><small>TIME</small><b>2:00</b><span>PM → 4:30 PM</span></div>
+          <div class="ic ic-venue"><small>VENUE</small><b>A510</b><span>Auditorium · LTCE</span></div>
+        </div>
+
+        <div class="hero-cta" id="heroCta">
+          <span class="bob"><a class="btn btn-lg btn-claim ringed-y" id="heroClaimBtn" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim my seat — 7 sec</a></span>
+          <a class="btn btn-lg btn-white" href="#perks">Peek the perks ↓</a>
+        </div>
+        <p class="hand hand-note" id="heroHandNote">we saved a seat with your name on it
+          <svg width="52" height="26" viewBox="0 0 60 30" fill="none" stroke="var(--royal)" stroke-width="3" stroke-linecap="round"><path d="M2 8c14 16 34 18 50 8m0 0l-8-2m8 2l-3 8"/></svg></p>
+
+        <div class="cd" id="cd">
+          <div class="box"><b id="cd-d">--</b><span>DAYS</span></div>
+          <div class="box"><b id="cd-h">--</b><span>HRS</span></div>
+          <div class="box"><b id="cd-m">--</b><span>MIN</span></div>
+          <div class="box"><b id="cd-s">--</b><span>SEC</span></div>
+          <div class="cd-live" id="cd-live">🔴 LIVE NOW — run to A510!</div>
+        </div>
+        <div class="seats" id="heroSeats">
+          <div class="row"><span>Seats claimed</span><b><span id="seatNum">0</span> / 150</b></div>
+          <div class="track"><div class="fill" id="seatBar"></div></div>
+          <small>…by people from your own classes. Story proofs inside ↓</small>
+        </div>
       </div>
-      <div class="hero-cta" id="heroCta">
-        <button class="btn btn-claim" id="heroClaimBtn">Claim my seat — 7 sec</button>
-        <a class="btn btn-white" href="#perks">Peek the perks ↓</a>
+
+      <div class="hero-art" id="heroArt">
+        <div class="art-bg gridbg" aria-hidden="true"></div>
+        <div class="mega-wrap" id="megaWrap">
+          <svg class="mega-svg" id="megaSvg" viewBox="0 0 230 180" aria-hidden="true">
+            <g id="soundWaves">
+              <path class="sw sw1" d="M142 56c8 6 8 44 0 52" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
+              <path class="sw sw2" d="M162 42c14 12 14 68 0 80" fill="none" stroke="var(--yellow)" stroke-width="4.5" stroke-linecap="round"/>
+              <path class="sw sw3" d="M182 28c20 18 20 100 0 118" fill="none" stroke="var(--green)" stroke-width="4.5" stroke-linecap="round"/>
+            </g>
+            <path d="M28 78 L118 34 L118 128 L28 100 Z" fill="var(--red)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+            <ellipse cx="118" cy="81" rx="16" ry="47" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5"/>
+            <rect x="42" y="98" width="22" height="52" rx="8" fill="var(--blue)" stroke="var(--ink)" stroke-width="5" transform="rotate(-14 53 124)"/>
+            <path d="M20 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="var(--green)" stroke="var(--ink)" stroke-width="3"/>
+          </svg>
+        </div>
+        <span class="sticker st1" id="st1">FREE ENTRY</span>
+        <span class="sticker st2" id="st2">150 SEATS ONLY</span>
+        <span class="sticker st3" id="st3">SWAG DROP 🎁</span>
       </div>
-      <p class="hand hand-note" id="heroHandNote">we saved a seat with your name on it
-        <svg width="52" height="26" viewBox="0 0 60 30" fill="none" stroke="var(--royal)" stroke-width="3" stroke-linecap="round"><path d="M2 8c14 16 34 18 50 8m0 0l-8-2m8 2l-3 8"/></svg></p>
-      <div class="cd" id="cd">
-        <div class="box"><b id="cd-d">--</b><span>DAYS</span></div>
-        <div class="box"><b id="cd-h">--</b><span>HRS</span></div>
-        <div class="box"><b id="cd-m">--</b><span>MIN</span></div>
-        <div class="box"><b id="cd-s">--</b><span>SEC</span></div>
-        <div class="cd-live" id="cd-live">🔴 LIVE NOW — run to A510!</div>
-      </div>
-      <div class="seats" id="heroSeats">
-        <div class="row"><span>Seats claimed</span><b><span id="seatNum">0</span> / 150</b></div>
-        <div class="track"><div class="fill" id="seatBar"></div></div>
-        <small>…by people from your own classes. Story proofs inside ↓</small>
-      </div>
-    </div>
-    <div class="hero-art" id="heroArt">
-      <div class="mega-wrap" id="megaWrap">
-        <svg class="mega-svg" id="megaSvg" viewBox="0 0 230 180" aria-hidden="true">
-          <!-- Sound waves emitted from megaphone mouth -->
-          <g id="soundWaves">
-            <path class="sw sw1" d="M142 56c8 6 8 44 0 52" fill="none" stroke="var(--blue)" stroke-width="4.5" stroke-linecap="round"/>
-            <path class="sw sw2" d="M162 42c14 12 14 68 0 80" fill="none" stroke="var(--yellow)" stroke-width="4.5" stroke-linecap="round"/>
-            <path class="sw sw3" d="M182 28c20 18 20 100 0 118" fill="none" stroke="var(--red)" stroke-width="4.5" stroke-linecap="round"/>
-          </g>
-          <!-- Megaphone -->
-          <path d="M28 78 L118 34 L118 128 L28 100 Z" fill="var(--red)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
-          <ellipse cx="118" cy="81" rx="16" ry="47" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5"/>
-          <rect x="42" y="98" width="22" height="52" rx="8" fill="var(--blue)" stroke="var(--ink)" stroke-width="5" transform="rotate(-14 53 124)"/>
-          <path d="M20 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="var(--green)" stroke="var(--ink)" stroke-width="3"/>
-        </svg>
-      </div>
-      <span class="sticker st1" id="st1">FREE ENTRY</span>
-      <span class="sticker st2" id="st2">150 SEATS ONLY</span>
-      <span class="sticker st3" id="st3">SWAG DROP 🎁</span>
     </div>
   </div>
 </header>
-
 
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true">
@@ -378,7 +431,7 @@ footer a:hover{color:var(--yellow)}
   <span class="brackets" style="top:8%;right:5%">&lt;/&gt;</span>
   <span class="brackets" style="bottom:6%;left:3%;font-size:4rem">{ }</span>
   <div class="wrap sp-grid">
-    <div class="rev" style="--r:-2.5deg">
+    <div class="rev">
       <div class="polaroid" id="speakerCard">
         <span class="tape"></span><span class="tape t2"></span>
         <div class="ph">
@@ -435,7 +488,7 @@ footer a:hover{color:var(--yellow)}
   </div>
 </section>
 
-<!-- THE PLAN (DARK-NAVY TIMELINE WITH GSAP + SCROLLTRIGGER ROW ENTRANCE) -->
+<!-- THE PLAN -->
 <section class="plan gridbg" id="plan">
   <div class="wrap" style="width:100%;">
     <div class="sec-head">
@@ -447,17 +500,11 @@ footer a:hover{color:var(--yellow)}
     </div>
 
     <div style="position:relative;margin-top:36px;">
-      <!-- Growing vertical gradient line across the entire list -->
       <div class="plan-line" id="planLine"></div>
-
       <ul class="rows" id="planRows">
-        <!-- Row 1 (Odd: travels from left) -->
         <li class="timeline-row" style="--tc:var(--blue)">
           <div><span class="time-pill" style="background:var(--blue);color:#fff;">2:00</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Check-in + sticker pack in hand</b>
             <small>Yes, the pack is yours before you even sit.</small>
@@ -465,28 +512,18 @@ footer a:hover{color:var(--yellow)}
           </div>
           <div class="row-sep"></div>
         </li>
-
-        <!-- Row 2 (Even: travels from right) -->
         <li class="timeline-row" style="--tc:var(--red)">
           <div><span class="time-pill" style="background:var(--red);color:#fff;">2:15</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Talk: Open Source, zero → first PR</b>
             <small>Shankar Warang, live. Q&amp;A mic stays open.</small>
           </div>
           <div class="row-sep"></div>
         </li>
-
-        <!-- Row 3 (Odd: travels from left) -->
         <li class="timeline-row" style="--tc:var(--yellow)">
           <div><span class="time-pill" style="background:var(--yellow);color:#101433;">3:15</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Mentorship picks: GSoC / C4GT roadmap</b>
             <small>How selection works, told straight, in 15 minutes.</small>
@@ -494,28 +531,18 @@ footer a:hover{color:var(--yellow)}
           </div>
           <div class="row-sep"></div>
         </li>
-
-        <!-- Row 4 (Even: travels from right) -->
         <li class="timeline-row" style="--tc:var(--green)">
           <div><span class="time-pill" style="background:var(--green);color:#fff;">3:45</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Swag drop + DevCoin mint</b>
             <small>MLH tees, GDG badges, DevCoin. Size run is full.</small>
           </div>
           <div class="row-sep"></div>
         </li>
-
-        <!-- Row 5 (Odd: travels from left) -->
         <li class="timeline-row" style="--tc:var(--blue)">
           <div><span class="time-pill" style="background:var(--blue);color:#fff;">4:15</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Group photo + hellos</b>
             <small>The photo goes on the wall. And your story.</small>
@@ -523,14 +550,9 @@ footer a:hover{color:var(--yellow)}
           </div>
           <div class="row-sep"></div>
         </li>
-
-        <!-- Row 6 (Even: travels from right) -->
         <li class="timeline-row" style="--tc:var(--red)">
           <div><span class="time-pill" style="background:var(--red);color:#fff;">4:30</span></div>
-          <div class="dot-wrap">
-            <div class="dot-pulse"></div>
-            <div class="dot-ring"></div>
-          </div>
+          <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Done. Homework: none.</b>
             <small>Optional after-credits: workshops on 7 &amp; 8 Oct ↓</small>
@@ -545,19 +567,15 @@ footer a:hover{color:var(--yellow)}
 <section class="devcon-showcase" id="devcon">
   <div class="wrap" style="text-align:center;">
     <p class="lab" style="justify-content:center;--c:var(--yellow);margin-bottom:0.8rem;"><i></i>04 // THE MAIN STAGE</p>
-    <h2 style="font-size:clamp(2.4rem, 6vw, 4rem);margin-bottom:1.2rem;">What is GDG DevCon?</h2>
+    <h2 style="font-size:clamp(2.4rem,6vw,4rem);margin-bottom:1.2rem;">What is GDG DevCon?</h2>
     <p style="font-size:1.1rem;color:rgba(255,255,255,0.85);max-width:48ch;margin:0 auto 2.5rem;">The biggest student developer convergence at LTCE. Zero fluff, pure building.</p>
-    
-    <!-- Shutter Window Frame -->
+
     <div class="devcon-window-frame" id="shutterFrame">
       <img src="assets/committee.jpg" alt="GDG Committee" onerror="this.src='images/image.png'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-      
-      <!-- Automated Wooden Shutter Blinds -->
       <div id="shutterBlindWrap" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
-
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(7,6,14,0.1) 0%, rgba(7,6,14,0.85) 100%);z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;text-align:left;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,6,14,0.1) 0%,rgba(7,6,14,0.85) 100%);z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;text-align:left;">
         <span class="chip" style="align-self:flex-start;background:var(--yellow);color:var(--ink);border-color:#fff;margin-bottom:0.6rem;">WHERE BUILDERS MEET</span>
-        <h3 style="font-size:clamp(1.6rem, 3.5vw, 2.6rem);color:#fff;">450+ Attendees · 12 Keynotes · 6 Labs · ₹1.5L Loot</h3>
+        <h3 style="font-size:clamp(1.6rem,3.5vw,2.6rem);color:#fff;">450+ Attendees · 12 Keynotes · 6 Labs · ₹1.5L Loot</h3>
       </div>
     </div>
   </div>
@@ -567,56 +585,43 @@ footer a:hover{color:var(--yellow)}
 <section class="loot gridbg" id="loot">
   <div class="loot-pin-wrap" id="lootPinWrap">
     <div class="loot-sticky" id="lootSticky">
-
-      <!-- Header -->
       <div class="loot-header">
         <p class="lab" style="justify-content:center;--c:var(--green);margin-bottom:.6rem"><i></i>05 / The loot table</p>
         <h2 style="font-size:clamp(2rem,5.4vw,3.6rem)">Walk out <span class="hl">loaded</span></h2>
         <p class="hand" style="font-size:1.3rem;margin-top:.3rem">price tag: ₹0 (yes, really)</p>
       </div>
 
-      <!-- Scrolling card track -->
       <div class="loot-scroll-area">
         <div class="loot-track" id="lootTrack">
-
           <div class="loot-card" style="--lr:-2deg;--lc:var(--blue)">
             <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><rect x="82" y="86" width="10" height="10" fill="var(--blue)"/><rect x="94" y="86" width="10" height="10" fill="var(--red)"/><rect x="106" y="86" width="10" height="10" fill="var(--yellow)"/><text x="100" y="126" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">MLH</text></svg>
             <b>MLH Tee</b><small>black. heavy. flexy.</small>
           </div>
-
           <div class="loot-card" style="--lr:1.5deg;--lc:var(--red)">
             <svg viewBox="0 0 200 200"><path d="M70 12 L60 62 M130 12 L140 62" stroke="var(--ink)" stroke-width="6"/><rect x="48" y="56" width="104" height="120" rx="12" fill="#fff" stroke="var(--ink)" stroke-width="6"/><rect x="86" y="70" width="28" height="9" rx="4.5" fill="var(--ink)"/><circle cx="100" cy="112" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M72 152h56" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/></svg>
             <b>GDG Badge</b><small>lanyard included</small>
           </div>
-
           <div class="loot-card" style="--lr:-1deg;--lc:var(--yellow)">
             <svg viewBox="0 0 200 200"><rect x="28" y="24" width="144" height="152" rx="10" fill="#fff" stroke="var(--ink)" stroke-width="6"/><circle cx="68" cy="66" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M132 44l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><circle cx="70" cy="132" r="17" fill="var(--green)" stroke="var(--ink)" stroke-width="5"/><path d="M120 122h28M120 142h28" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/></svg>
             <b>Sticker Pack</b><small>laptop fuel</small>
           </div>
-
           <div class="loot-card" style="--lr:2deg;--lc:var(--green)">
             <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="var(--ink)" stroke-width="6"/><circle cx="100" cy="100" r="52" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="8 8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="var(--ink)">&lt;/&gt;</text></svg>
             <b>DevCoin</b><small>mint it live</small>
           </div>
-
           <div class="loot-card" style="--lr:-1.6deg;--lc:var(--royal)">
             <svg viewBox="0 0 200 200"><path d="M24 52 H176 V84 A16 16 0 0 0 176 116 V148 H24 V116 A16 16 0 0 0 24 84 Z" fill="var(--green)" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M136 52 V148" stroke="var(--ink)" stroke-width="4" stroke-dasharray="7 7"/><text x="80" y="110" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">PASS</text></svg>
             <b>Rewards Pass</b><small>faculty mentors too</small>
           </div>
-
-          <!-- Bonus end card: ₹0 burst -->
           <div class="loot-card" style="--lr:1deg;--lc:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow)">
-            <svg class="burst" viewBox="0 0 200 200" aria-hidden="true" style="width:110px;height:110px;animation:spin 14s linear infinite"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
+            <svg class="burst" viewBox="0 0 200 200" aria-hidden="true" style="width:110px;height:110px"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
             <b style="font-size:1.1rem;margin-top:.5rem">Everything above.</b>
             <small style="opacity:1;font-size:.85rem">Free. Just show up.</small>
           </div>
-
         </div>
       </div>
 
-      <!-- Scroll hint -->
       <p class="loot-scroll-hint" id="lootHint">SCROLL TO REVEAL ALL LOOT →</p>
-
     </div>
   </div>
 </section>
@@ -625,25 +630,20 @@ footer a:hover{color:var(--yellow)}
 <section class="pass-section" id="passes">
   <div class="wrap" style="text-align:center;">
     <p class="lab rev" style="justify-content:center;--c:var(--royal);margin-bottom:0.8rem;"><i></i>06 // EXCLUSIVE ACCESS</p>
-    <h2 class="rev" style="--d:.06s;font-size:clamp(2.4rem, 6vw, 4.4rem);">Your All-Access DevCon Pass</h2>
+    <h2 class="rev" style="--d:.06s;font-size:clamp(2.4rem,6vw,4.4rem);">Your All-Access DevCon Pass</h2>
     <p class="rev" style="--d:.12s;color:rgba(255,255,255,0.75);font-size:1.15rem;max-width:44ch;margin:0 auto 2rem;">Move your cursor to tilt the passes in 3D perspective.</p>
-    
-    <!-- 3D Fan Pass Stage (Horizontal) -->
+
     <div class="pass-stage" id="passStage">
-      <!-- Left Fan Card -->
       <div class="pass-fan-card" id="passLeft" style="transform:translateX(-50px) translateY(18px) rotate(-6deg) scale(0.94);z-index:1;">
         <img src="https://drive.google.com/thumbnail?id=1767o5NTdDR1diesepTPquPQjPTR2uKjp&sz=w1200" alt="DevCon Pass Left" onerror="this.src='https://lh3.googleusercontent.com/d/1767o5NTdDR1diesepTPquPQjPTR2uKjp'">
       </div>
-      <!-- Right Fan Card -->
       <div class="pass-fan-card" id="passRight" style="transform:translateX(50px) translateY(18px) rotate(6deg) scale(0.94);z-index:2;">
         <img src="https://drive.google.com/thumbnail?id=1767o5NTdDR1diesepTPquPQjPTR2uKjp&sz=w1200" alt="DevCon Pass Right" onerror="this.src='https://lh3.googleusercontent.com/d/1767o5NTdDR1diesepTPquPQjPTR2uKjp'">
       </div>
-      <!-- Center Main Card -->
       <div class="pass-fan-card" id="passCenter" style="transform:translateZ(40px);z-index:3;">
         <img src="https://drive.google.com/thumbnail?id=1767o5NTdDR1diesepTPquPQjPTR2uKjp&sz=w1200" alt="DevCon Pass Center" onerror="this.src='https://lh3.googleusercontent.com/d/1767o5NTdDR1diesepTPquPQjPTR2uKjp'">
       </div>
     </div>
-
   </div>
 </section>
 
@@ -656,9 +656,9 @@ footer a:hover{color:var(--yellow)}
       <p class="hand rev" style="--d:.12s">say yes to monday. decide the rest after. (spoiler: everyone says yes)</p>
     </div>
     <div class="eps">
-      <article class="ep rev" style="--ec:var(--blue);--er:-1.4deg"><div class="bar"></div><div class="in"><span class="no">ep. 02 →</span><h3>New Tech Updates</h3><p>Monthly drop of what actually changed in tech. No newsletter spam, just the good bits.</p></div></article>
-      <article class="ep rev" style="--ec:var(--yellow);--er:1.2deg;--d:.08s"><div class="bar"></div><div class="in"><span class="no">every sunday →</span><h3>Sunday Tech Bits</h3><p>Snack-size builds &amp; tools to try with your chai. Ten minutes, once a week.</p></div></article>
-      <article class="ep rev" style="--ec:var(--green);--er:-1deg;--d:.16s"><div class="bar"></div><div class="in"><span class="no">7 &amp; 8 oct →</span><h3>Hands-on Workshops</h3><p>Laptops open, mentors roaming, first commit shipped before you leave.</p></div></article>
+      <article class="ep rev" style="--ec:var(--blue);--r:-1.4deg"><div class="bar"></div><div class="in"><span class="no">ep. 02 →</span><h3>New Tech Updates</h3><p>Monthly drop of what actually changed in tech. No newsletter spam, just the good bits.</p></div></article>
+      <article class="ep rev" style="--ec:var(--yellow);--r:1.2deg;--d:.1s"><div class="bar"></div><div class="in"><span class="no">every sunday →</span><h3>Sunday Tech Bits</h3><p>Snack-size builds &amp; tools to try with your chai. Ten minutes, once a week.</p></div></article>
+      <article class="ep rev" style="--ec:var(--green);--r:-1deg;--d:.2s"><div class="bar"></div><div class="in"><span class="no">7 &amp; 8 oct →</span><h3>Hands-on Workshops</h3><p>Laptops open, mentors roaming, first commit shipped before you leave.</p></div></article>
     </div>
   </div>
 </section>
@@ -677,9 +677,9 @@ GDG Orientation Day =
 🎁 MLH tees · stickers · DevCoin — all FREE
 One afternoon. Zero fee. Say yes.
 #GDGLTCE #Orientation #OpenSource</div>
-      <button class="btn btn-white rev" style="--d:.24s" id="copyCap">📋 Copy insta caption</button>
+      <div class="rev" style="--d:.24s"><button class="btn btn-white" id="copyCap">📋 Copy insta caption</button></div>
     </div>
-    <div class="phone gridbg rev" id="instaPhone" style="--r:3deg;--d:.1s">
+    <div class="phone gridbg rev" id="instaPhone" style="--d:.1s">
       <div>
         <div class="dots"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
         <p class="psub" style="margin-top:14px;color:#fff">GDG LTCE · ORIENTATION</p>
@@ -716,8 +716,8 @@ One afternoon. Zero fee. Say yes.
     </ul>
     <p class="prize rev" style="--d:.32s">We're glad we could find a window in our schedule for you — one seat, holding your name till 2:05 PM. →</p>
     <div class="hero-cta rev" style="--d:.36s">
-      <button class="btn btn-royal btn-claim">Claim my seat (7 sec)</button>
-      <a class="btn btn-ink" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GDG%20Orientation%20%F0%9F%8E%92&dates=20251006T140000/20251006T163000&ctz=Asia/Kolkata&location=A510%20Auditorium%2C%20LTCE&details=Founder%20talk%20%2B%20mentorship%20picks%20%2B%20free%20swag%20drop.%20Bring%20nothing%2C%20leave%20loaded.">＋ Add to calendar</a>
+      <span class="bob"><a class="btn btn-lg btn-royal btn-claim" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim my seat (7 sec)</a></span>
+      <a class="btn btn-lg btn-ink" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GDG%20Orientation%20%F0%9F%8E%92&dates=20251006T140000/20251006T163000&ctz=Asia/Kolkata&location=A510%20Auditorium%2C%20LTCE&details=Founder%20talk%20%2B%20mentorship%20picks%20%2B%20free%20swag%20drop.%20Bring%20nothing%2C%20leave%20loaded.">＋ Add to calendar</a>
     </div>
     <p class="fine rev" style="--d:.4s">no fee · no long form · no regret (we checked)</p>
   </div>
@@ -743,802 +743,445 @@ One afternoon. Zero fee. Say yes.
   <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you monday, 2:00 sharp →</span></div>
 </footer>
 
+<!-- FLOATING REGISTER BUTTON — always on screen, bounces to draw the eye -->
+<div class="fab" id="fab">
+  <span class="bob">
+    <a class="btn btn-red ringed btn-claim" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener"><i class="pip"></i>Register — it's free →</a>
+  </span>
+</div>
+
 <!-- Toast notification -->
 <div id="toast" role="status"></div>
 
 <script>
 /* ==========================================================================
-   1. WEB AUDIO SYNTHESIZER ENGINE (ZERO AUDIO FILES)
+   CONFIG — change the event date here (drives countdown, LIVE and wrapped states)
+   ========================================================================== */
+const EVENT_START = new Date('2025-10-06T14:00:00+05:30');
+const EVENT_END   = new Date('2025-10-06T16:30:00+05:30');
+const TOTAL_SEATS = 150, CLAIMED_SEATS = 132;
+
+const hasGSAP = typeof gsap !== 'undefined';
+const hasST   = hasGSAP && typeof ScrollTrigger !== 'undefined';
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (hasST) gsap.registerPlugin(ScrollTrigger);
+
+/* ==========================================================================
+   1. WEB AUDIO CLICK
    ========================================================================== */
 const AudioSynth = new class {
   constructor() { this.ctx = null; }
   init() {
-    if (!this.ctx && typeof window !== 'undefined') {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) this.ctx = new AudioCtx();
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) this.ctx = new AC();
     }
     if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
   }
   playClick() {
     this.init(); if (!this.ctx) return;
     try {
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'square'; const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), now = this.ctx.currentTime;
+      osc.type = 'square';
       osc.frequency.setValueAtTime(800, now);
       osc.frequency.exponentialRampToValueAtTime(200, now + 0.03);
       gain.gain.setValueAtTime(0.08, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
       osc.connect(gain); gain.connect(this.ctx.destination);
       osc.start(now); osc.stop(now + 0.03);
-    } catch(e){}
+    } catch (e) {}
   }
 };
 
 /* ==========================================================================
-   2. HIGH-PERFORMANCE SMOOTH SCROLL PROGRESS BAR (rAF THROTTLED)
+   2. SMOOTH SCROLL (Lenis, synced with GSAP) + anchor links
    ========================================================================== */
-let ticking = false;
-window.addEventListener('scroll', () => {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
-      const pBar = document.getElementById('scroll-progress');
-      if (pBar) pBar.style.transform = `scaleX(${progress})`;
-      ticking = false;
-    });
-    ticking = true;
-  }
-}, { passive: true });
+let lenis = null;
+if (typeof Lenis !== 'undefined' && hasGSAP && !reduced) {
+  lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  if (hasST) lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id.length < 2) return;
+    const el = document.querySelector(id);
+    if (!el) return;
+    e.preventDefault();
+    if (lenis) lenis.scrollTo(el, { offset: id === '#top' ? 0 : -62, duration: 1.3 });
+    else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* scroll progress bar */
+const pBar = document.getElementById('scroll-progress');
+function updateProgress() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  pBar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+}
+if (hasGSAP) gsap.ticker.add(updateProgress);
+else window.addEventListener('scroll', updateProgress, { passive: true });
+
+/* nav scroll-spy */
+(function navSpy() {
+  const links = [...document.querySelectorAll('#navLinks a')];
+  const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(l => l.classList.remove('active'));
+    const l = map.get(e.target.id); if (l) l.classList.add('active');
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+})();
 
 /* ==========================================================================
-   2.5 BLOCKBUSTER HERO INTRO (GSAP 3 MASTER TIMELINE & INTERACTION)
+   3. SEATS
    ========================================================================== */
-(function setupBlockbusterHeroIntro(){
-  if (typeof gsap === 'undefined') return;
+const seatNum = document.getElementById('seatNum'), seatBar = document.getElementById('seatBar');
+function setSeats(n) {
+  seatNum.textContent = n;
+  seatBar.style.width = (n / TOTAL_SEATS * 100) + '%';
+}
 
-  const wordOrien = document.getElementById('wordOrien');
-  const wordTation = document.getElementById('wordTation');
-  const hlBar = document.getElementById('heroHlBar');
-  const heroGrid = document.getElementById('heroGrid');
-  const megaWrap = document.getElementById('megaWrap');
-  const megaSvg = document.getElementById('megaSvg');
-  const soundWaves = document.querySelectorAll('#soundWaves .sw');
-  const st1 = document.getElementById('st1');
-  const st2 = document.getElementById('st2');
-  const st3 = document.getElementById('st3');
-  const heroChips = document.querySelectorAll('#heroChips .chip');
-  const heroCtaBtn = document.getElementById('heroClaimBtn');
-  const liveBanner = document.getElementById('cd-live');
-  const seatBar = document.getElementById('seatBar');
-  const seatNum = document.getElementById('seatNum');
-  const heroGhost = document.getElementById('heroGhost');
-  const heroKick = document.getElementById('heroKick');
-  const heroSub = document.getElementById('heroSub');
-  const heroHand = document.getElementById('heroHandNote');
-  const heroCd = document.getElementById('cd');
+/* ==========================================================================
+   4. HERO INTRO (one orchestrated timeline)
+   ========================================================================== */
+(function heroIntro() {
+  const title = document.getElementById('megaText');
+  title.innerHTML = [...title.textContent].map(c => `<span class="ch">${c}</span>`).join('');
 
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  const hlBar = $('heroHlBar'), megaWrap = $('megaWrap'), megaSvg = $('megaSvg'), heroArt = $('heroArt');
+  const waves = document.querySelectorAll('#soundWaves .sw');
+  const stickers = [$('st1'), $('st2'), $('st3')];
+  const infoCards = document.querySelectorAll('#heroInfo .ic');
+  const textBits = [$('heroKick'), $('heroSub'), $('heroHandNote'), $('cd'), $('heroSeats')];
+  const cta = $('heroCta');
+  const chars = title.querySelectorAll('.ch');
 
-  // Reduced motion instant final state
-  if (prefersReduced) {
-    if (wordOrien) gsap.set(wordOrien, { y: 0, opacity: 1 });
-    if (wordTation) gsap.set(wordTation, { y: 0, opacity: 1 });
-    if (hlBar) gsap.set(hlBar, { scaleX: 1 });
-    if (megaWrap) gsap.set(megaWrap, { scale: 1, rotation: 0, opacity: 1 });
-    if (st1) gsap.set(st1, { scale: 1, rotation: -10, opacity: 1, '--sh': '3px' });
-    if (st2) gsap.set(st2, { scale: 1, rotation: 7, opacity: 1, '--sh': '3px' });
-    if (st3) gsap.set(st3, { scale: 1, rotation: -5, opacity: 1, '--sh': '3px' });
-    if (heroChips) gsap.set(heroChips, { scale: 1, opacity: 1 });
-    if (seatBar) seatBar.style.width = '88%';
-    if (seatNum) seatNum.textContent = '132';
+  if (!hasGSAP || reduced) {
+    hlBar.style.transform = 'rotate(-1deg) scaleX(1)';
+    setSeats(CLAIMED_SEATS);
     return;
   }
 
-  // Initial States
-  gsap.set([wordOrien, wordTation], { y: '-140%', opacity: 0 });
-  gsap.set(hlBar, { scaleX: 0 });
-  gsap.set(megaWrap, { scale: 0, rotation: -25, opacity: 0 });
-  gsap.set(soundWaves, { scale: 0.4, opacity: 0 });
-  gsap.set([st1, st2, st3], { scale: 0, opacity: 0, '--sh': '0px' });
-  gsap.set(heroChips, { scale: 0.6, opacity: 0 });
-  gsap.set([heroKick, heroSub, heroCtaBtn, heroHand, heroCd], { opacity: 0 });
-
-  function fireMegaphoneConfetti(count = 80){
-    const art = document.getElementById('heroArt');
-    if (!art || typeof confetti === 'undefined') return;
-    const rect = art.getBoundingClientRect();
-    const originX = (rect.left + rect.width * 0.7) / window.innerWidth;
-    const originY = (rect.top + rect.height * 0.45) / window.innerHeight;
-    const particleCount = window.innerWidth < 700 ? Math.floor(count / 2) : count;
-
+  function fireConfetti(count = 80) {
+    if (typeof confetti === 'undefined') return;
+    const r = heroArt.getBoundingClientRect();
     confetti({
-      particleCount: particleCount,
-      spread: 75,
-      startVelocity: 35,
-      origin: { x: Math.max(0.1, Math.min(0.9, originX)), y: Math.max(0.1, Math.min(0.9, originY)) },
-      colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853'],
-      ticks: 160,
-      gravity: 0.9,
-      scalar: 1.05
+      particleCount: window.innerWidth < 700 ? Math.floor(count / 2) : count,
+      spread: 75, startVelocity: 35,
+      origin: { x: Math.max(.1, Math.min(.9, (r.left + r.width * .7) / innerWidth)), y: Math.max(.1, Math.min(.9, (r.top + r.height * .45) / innerHeight)) },
+      colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853'], ticks: 160, gravity: .9, scalar: 1.05
     });
   }
 
-  function screenShake(){
-    if (!heroGrid) return;
-    gsap.fromTo(heroGrid, 
-      { x: -3 }, 
-      { x: 3, duration: 0.04, repeat: 3, yoyo: true, onComplete: () => gsap.set(heroGrid, { x: 0 }) }
-    );
-  }
+  // initial states
+  gsap.set(chars, { yPercent: -130, opacity: 0, rotation: () => gsap.utils.random(-10, 10) });
+  gsap.set(hlBar, { scaleX: 0 });
+  gsap.set(textBits, { autoAlpha: 0, y: 22 });
+  gsap.set(infoCards, { autoAlpha: 0, y: 40, scale: .85 });
+  gsap.set(cta, { autoAlpha: 0, y: 26 });
+  gsap.set(megaWrap, { scale: 0, rotation: -25, autoAlpha: 0 });
+  gsap.set(waves, { scale: .4, opacity: 0 });
+  gsap.set(stickers, { scale: 0, autoAlpha: 0, '--sh': '0px' });
 
-  // Master Intro Timeline (approx 3.0s)
-  const master = gsap.timeline({ delay: 0.1 });
+  const tl = gsap.timeline({ delay: .1, defaults: { ease: 'power3.out' } });
 
-  // 0.0s: "ORIEN-" drops and bounces with screen shake
-  master.to(wordOrien, {
-    y: '0%', opacity: 1, duration: 0.45, ease: 'bounce.out',
-    onComplete: screenShake
-  }, 0.0);
+  tl.to(chars, { yPercent: 0, opacity: 1, rotation: 0, duration: .8, ease: 'back.out(1.7)', stagger: .045 }, 0)
+    .to(hlBar, { scaleX: 1, duration: .6, ease: 'power3.out' }, .45)
+    .to($('heroKick'), { autoAlpha: 1, y: 0, duration: .6 }, .15)
+    .to($('heroSub'), { autoAlpha: 1, y: 0, duration: .6 }, .55)
+    .to(infoCards, { autoAlpha: 1, y: 0, scale: 1, duration: .7, ease: 'back.out(1.6)', stagger: .12 }, .7)
+    .to(cta, { autoAlpha: 1, y: 0, duration: .7, ease: 'back.out(1.8)' }, 1.15)
+    .to([$('heroHandNote'), $('cd'), $('heroSeats')], { autoAlpha: 1, y: 0, duration: .6, stagger: .1 }, 1.3)
+    // megaphone
+    .to(megaWrap, { scale: 1, rotation: 0, autoAlpha: 1, duration: .9, ease: 'back.out(1.9)' }, .6)
+    .call(() => fireConfetti(80), null, 1.2);
 
-  // 0.18s: "TATION" drops and bounces with screen shake
-  master.to(wordTation, {
-    y: '0%', opacity: 1, duration: 0.45, ease: 'bounce.out',
-    onComplete: screenShake
-  }, 0.18);
+  waves.forEach((w, i) => tl.fromTo(w, { scale: .5, opacity: .95 }, { scale: 1.4, opacity: 0, duration: .6, ease: 'power2.out' }, 1.05 + i * .1));
+  tl.to(megaWrap, { x: 10, duration: .1, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 1.05);
 
-  // Yellow highlight bar scales in
-  master.to(hlBar, { scaleX: 1, duration: 0.4, ease: 'power2.out' }, 0.42);
-
-  // Other text elements fade in
-  master.to([heroKick, heroSub, heroHand, heroCd], { opacity: 1, duration: 0.4, stagger: 0.06 }, 0.4);
-
-  // 0.5s: Megaphone scales from 0 to 1 with back.out(2.2) from rotation -25deg
-  master.to(megaWrap, {
-    scale: 1, rotation: 0, opacity: 1, duration: 0.65, ease: 'back.out(2.2)'
-  }, 0.5);
-
-  // 0.8s: Three SVG sound waves scale and fade outward + Megaphone recoil
-  soundWaves.forEach((wave, idx) => {
-    master.fromTo(wave,
-      { scale: 0.5, opacity: 0.9 },
-      { scale: 1.4, opacity: 0, duration: 0.5, ease: 'power2.out' },
-      0.8 + idx * 0.1
-    );
+  const stickerEnd = [{ rot: -10 }, { rot: 7 }, { rot: -5 }];
+  stickers.forEach((s, i) => {
+    tl.fromTo(s, { scale: 0, autoAlpha: 0, x: 40, y: -20, rotation: -30 + i * 20 },
+      { scale: 1, autoAlpha: 1, x: 0, y: 0, rotation: stickerEnd[i].rot, duration: .7, ease: 'back.out(1.8)' }, 1.15 + i * .1)
+      .to(s, { '--sh': '4px', duration: .25 }, 1.7 + i * .1);
   });
-  // Megaphone recoil
-  master.to(megaWrap, { x: 10, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 0.8);
 
-  // 0.9s: Stickers fly out from megaphone mouth to final spots with overshoot
-  // Sticker 1: FREE ENTRY
-  master.fromTo(st1,
-    { scale: 0, opacity: 0, x: 40, y: -20, rotation: -40 },
-    { scale: 1, opacity: 1, x: 0, y: 0, rotation: -10, duration: 0.55, ease: 'back.out(1.8)' },
-    0.9
-  );
-  master.to(st1, { '--sh': '3px', duration: 0.15 }, 1.35);
+  // seat counter
+  tl.call(() => {
+    seatBar.style.width = (CLAIMED_SEATS / TOTAL_SEATS * 100) + '%';
+    const o = { v: 0 };
+    gsap.to(o, { v: CLAIMED_SEATS, duration: 1.4, ease: 'power2.out', onUpdate: () => seatNum.textContent = Math.round(o.v) });
+  }, null, 1.6);
 
-  // Sticker 2: 150 SEATS ONLY
-  master.fromTo(st2,
-    { scale: 0, opacity: 0, x: -30, y: -50, rotation: -20 },
-    { scale: 1, opacity: 1, x: 0, y: 0, rotation: 7, duration: 0.55, ease: 'back.out(1.8)' },
-    0.98
-  );
-  master.to(st2, { '--sh': '3px', duration: 0.15 }, 1.45);
+  // ---- interactions (quickTo = smooth, no per-frame ticker) ----
+  const rotTo = gsap.quickTo(megaSvg, 'rotation', { duration: .7, ease: 'power3.out' });
+  heroArt.addEventListener('pointermove', e => {
+    const r = heroArt.getBoundingClientRect();
+    rotTo(((e.clientX - r.left) / r.width - .5) * 16);
+  });
+  heroArt.addEventListener('pointerleave', () => rotTo(0));
 
-  // Sticker 3: SWAG DROP
-  master.fromTo(st3,
-    { scale: 0, opacity: 0, x: 60, y: -60, rotation: 30 },
-    { scale: 1, opacity: 1, x: 0, y: 0, rotation: -5, duration: 0.55, ease: 'back.out(1.8)' },
-    1.06
-  );
-  master.to(st3, { '--sh': '3px', duration: 0.15 }, 1.55);
+  heroArt.addEventListener('pointerdown', () => {
+    AudioSynth.playClick();
+    fireConfetti(60);
+    waves.forEach((w, i) => gsap.fromTo(w, { scale: .6, opacity: 1 }, { scale: 1.6, opacity: 0, duration: .5, ease: 'power2.out', delay: i * .06 }));
+    gsap.fromTo(megaWrap, { x: 8 }, { x: 0, duration: .5, ease: 'elastic.out(1.2,.4)' });
+    stickers.forEach(st => gsap.to(st, {
+      x: (Math.random() - .5) * 24, y: (Math.random() - .5) * 24, rotation: `+=${(Math.random() - .5) * 16}`,
+      duration: .18, yoyo: true, repeat: 1, ease: 'power2.out', overwrite: 'auto'
+    }));
+  });
 
-  // 1.0s: Confetti burst from megaphone mouth
-  master.call(() => fireMegaphoneConfetti(80), null, 1.0);
-
-  // 1.4s: Info pills pop in (scale 0.6 -> 1, back.out, stagger 0.1)
-  master.to(heroChips, {
-    scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)', stagger: 0.1
-  }, 1.4);
-
-  // CTA button bounces once
-  master.to(heroCtaBtn, {
-    opacity: 1, y: -8, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out'
-  }, 1.6);
-
-  // LIVE NOW banner slides with wiggle if visible
-  if (liveBanner) {
-    master.fromTo(liveBanner,
-      { x: -50, opacity: 0, rotation: -8 },
-      { x: 0, opacity: 1, rotation: -2, duration: 0.5, ease: 'elastic.out(1, 0.4)' },
-      1.7
-    );
-  }
-
-  // 2.0s: Progress bar fills while counter counts up
-  master.call(() => {
-    if (seatBar) seatBar.style.width = '88%';
-    const countObj = { val: 0 };
-    gsap.to(countObj, {
-      val: 132,
-      duration: 1.2,
-      ease: 'power2.out',
-      onUpdate: () => {
-        if (seatNum) seatNum.textContent = Math.round(countObj.val);
-      }
-    });
-  }, null, 2.0);
-
-  // ── AFTER INTRO INTERACTIONS ──
-
-  // 1. Megaphone pointer tracking (lerps rotation up to ±8deg)
-  const heroArt = document.getElementById('heroArt');
-  if (heroArt) {
-    let currentRot = 0, targetRot = 0;
-    heroArt.addEventListener('pointermove', (e) => {
-      const rect = heroArt.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      targetRot = x * 16; // up to ±8deg
-    });
-    heroArt.addEventListener('pointerleave', () => { targetRot = 0; });
-
-    gsap.ticker.add(() => {
-      currentRot += (targetRot - currentRot) * 0.1;
-      if (megaSvg) gsap.set(megaSvg, { rotation: currentRot });
-    });
-
-    // 2. Click/tap anywhere in hero: "BOOM", confetti burst, stickers nudge and spring back
-    heroArt.addEventListener('pointerdown', () => {
-      AudioSynth.playClick();
-      fireMegaphoneConfetti(60);
-
-      // Sound waves puff
-      soundWaves.forEach((w, i) => {
-        gsap.fromTo(w,
-          { scale: 0.6, opacity: 1 },
-          { scale: 1.6, opacity: 0, duration: 0.4, ease: 'power2.out', delay: i * 0.06 }
-        );
-      });
-
-      // Recoil megaphone
-      gsap.fromTo(megaWrap, { x: 8 }, { x: 0, duration: 0.25, ease: 'elastic.out(1.2, 0.4)' });
-
-      // Sticker random nudge and spring back
-      [st1, st2, st3].forEach(st => {
-        if (!st) return;
-        const nudgeX = (Math.random() - 0.5) * 24;
-        const nudgeY = (Math.random() - 0.5) * 24;
-        const nudgeR = (Math.random() - 0.5) * 16;
-        gsap.to(st, {
-          x: nudgeX, y: nudgeY, rotation: `+=${nudgeR}`, duration: 0.15,
-          yoyo: true, repeat: 1, ease: 'back.out(2)'
-        });
-      });
-    });
-  }
-
-  // 3. On scroll: stickers parallax at different speeds, .ghost moves opposite
-  if (typeof ScrollTrigger !== 'undefined') {
-    if (st1) {
-      gsap.to(st1, { y: -80, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
-    }
-    if (st2) {
-      gsap.to(st2, { y: -140, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
-    }
-    if (st3) {
-      gsap.to(st3, { y: -40, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
-    }
-    if (heroGhost) {
-      gsap.to(heroGhost, { y: 60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
-    }
+  // ---- scroll parallax (single set of triggers) ----
+  if (hasST) {
+    const base = { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 1 };
+    gsap.to('#heroGhost', { y: 90, ease: 'none', scrollTrigger: base });
+    gsap.to(heroArt, { y: -50, ease: 'none', scrollTrigger: base });
   }
 })();
 
 /* ==========================================================================
-   3. THE PLAN TIMELINE ANIMATION (GSAP 3 + SCROLLTRIGGER)
+   5. PLAN TIMELINE (GSAP + ScrollTrigger)
    ========================================================================== */
-(function setupPlanTimelineAnimation(){
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  const planSection = document.getElementById('plan');
+(function planTimeline() {
+  if (!hasST) return;
   const planRows = document.getElementById('planRows');
   const planLine = document.getElementById('planLine');
   const rows = document.querySelectorAll('.plan .timeline-row');
-  if (!planSection || !rows.length) return;
+  if (!planRows || !rows.length) return;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    if (planLine) gsap.set(planLine, { scaleY: 1 });
-    rows.forEach(row => {
-      gsap.set(row, { x: 0, skewX: 0, rotation: 0, opacity: 1 });
-      const pill = row.querySelector('.time-pill');
-      const dot = row.querySelector('.dot-ring');
-      const sep = row.querySelector('.row-sep');
-      const hand = row.querySelector('.hand-tag');
-      if (pill) gsap.set(pill, { scale: 1 });
-      if (dot) gsap.set(dot, { scale: 1 });
-      if (sep) gsap.set(sep, { scaleX: 1 });
-      if (hand) gsap.set(hand, { opacity: 1, rotation: -2, y: 0 });
+  if (reduced) {
+    gsap.set(planLine, { scaleY: 1 });
+    rows.forEach(r => {
+      gsap.set(r, { opacity: 1 });
+      gsap.set(r.querySelector('.row-sep'), { scaleX: 1 });
     });
     return;
   }
 
-  // 1. Vertical line grows downward across the whole list
-  if (planLine && planRows) {
-    gsap.fromTo(planLine, 
-      { scaleY: 0 },
-      {
-        scaleY: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: planRows,
-          start: 'top 80%',
-          end: 'bottom 60%',
-          scrub: true
-        }
-      }
-    );
-  }
+  gsap.fromTo(planLine, { scaleY: 0 }, {
+    scaleY: 1, ease: 'none',
+    scrollTrigger: { trigger: planRows, start: 'top 80%', end: 'bottom 60%', scrub: true }
+  });
 
-  // 2. Responsive matchMedia for travel distance (±110vw vs ±40vw)
   const mm = gsap.matchMedia();
-
-  mm.add({
-    isDesktop: '(min-width: 700px)',
-    isMobile: '(max-width: 699px)'
-  }, (context) => {
-    const { isDesktop } = context.conditions;
-    const travelDist = isDesktop ? 110 : 40;
-
+  mm.add({ isDesktop: '(min-width: 700px)', isMobile: '(max-width: 699px)' }, ctx => {
+    const dist = ctx.conditions.isDesktop ? 110 : 40;
     rows.forEach((row, i) => {
-      const isOdd = (i % 2 === 0); // 1, 3, 5 are odd indices (0, 2, 4)
-      const startX = isOdd ? `-${travelDist}vw` : `${travelDist}vw`;
-      const startSkew = isOdd ? -12 : 12;
-      const startRot = isOdd ? -3 : 3;
+      const odd = i % 2 === 0;
+      const timePill = row.querySelector('.time-pill'), dotRing = row.querySelector('.dot-ring'),
+            dotPulse = row.querySelector('.dot-pulse'), rowSep = row.querySelector('.row-sep'),
+            handTag = row.querySelector('.hand-tag');
 
-      const timePill = row.querySelector('.time-pill');
-      const dotRing = row.querySelector('.dot-ring');
-      const dotPulse = row.querySelector('.dot-pulse');
-      const rowSep = row.querySelector('.row-sep');
-      const handTag = row.querySelector('.hand-tag');
-
-      // Initial state
-      gsap.set(row, { x: startX, skewX: startSkew, rotation: startRot, opacity: 0 });
-      if (timePill) gsap.set(timePill, { scale: 0.6 });
-      if (dotRing) gsap.set(dotRing, { scale: 0 });
-      if (dotPulse) gsap.set(dotPulse, { scale: 1, opacity: 0 });
+      gsap.set(row, { x: `${odd ? '-' : ''}${dist}vw`, skewX: odd ? -12 : 12, rotation: odd ? -3 : 3, opacity: 0 });
+      gsap.set(timePill, { scale: .6 });
+      gsap.set(dotRing, { scale: 0 });
+      gsap.set(dotPulse, { scale: 1, opacity: 0 });
       if (rowSep) gsap.set(rowSep, { scaleX: 0 });
       if (handTag) gsap.set(handTag, { opacity: 0, rotation: -6, y: 10 });
 
-      // Row timeline with its own ScrollTrigger
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: row,
-          start: 'top 85%',
-          end: 'top 55%',
-          scrub: 0.6
-        }
-      });
-
-      // Opacity 0 to 1 over first 30% of tween
-      tl.to(row, { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
-
-      // Travel x with power3.out / back.out(1.2) overshoot, skew and rotation resolve to 0
-      tl.to(row, { x: '0vw', duration: 1, ease: 'back.out(1.2)' }, 0);
-      tl.to(row, { skewX: 0, rotation: 0, duration: 1, ease: 'power3.out' }, 0);
-
-      // Time label scales 0.6 to 1 with "back.out(2)" a moment before text lands
-      if (timePill) {
-        tl.to(timePill, { scale: 1, duration: 0.4, ease: 'back.out(2)' }, 0.35);
-      }
-
-      // Ring dot scales 0 to 1
-      if (dotRing) {
-        tl.to(dotRing, { scale: 1, duration: 0.4, ease: 'back.out(1.8)' }, 0.45);
-      }
-
-      // Expanding, fading pulse ring when row is about 90% in
-      if (dotPulse) {
-        tl.to(dotPulse, { opacity: 1, scale: 1, duration: 0.05 }, 0.85)
-          .to(dotPulse, { scale: 2.6, opacity: 0, duration: 0.3, ease: 'power2.out' }, 0.9);
-      }
-
-      // Dashed separator draws left to right
-      if (rowSep) {
-        tl.to(rowSep, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, 0.2);
-      }
-
-      // Handwritten note rotates & fades in after row has landed
-      if (handTag) {
-        tl.to(handTag, { opacity: 1, rotation: -2, y: 0, duration: 0.35, ease: 'power2.out' }, 0.8);
-      }
+      const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 88%', end: 'top 55%', scrub: .6 } });
+      tl.to(row, { opacity: 1, duration: .3, ease: 'power1.out' }, 0)
+        .to(row, { x: '0vw', duration: 1, ease: 'power3.out' }, 0)
+        .to(row, { skewX: 0, rotation: 0, duration: 1, ease: 'power3.out' }, 0)
+        .to(timePill, { scale: 1, duration: .4, ease: 'back.out(2)' }, .35)
+        .to(dotRing, { scale: 1, duration: .4, ease: 'back.out(1.8)' }, .45)
+        .to(dotPulse, { opacity: 1, scale: 1, duration: .05 }, .85)
+        .to(dotPulse, { scale: 2.6, opacity: 0, duration: .3, ease: 'power2.out' }, .9);
+      if (rowSep) tl.to(rowSep, { scaleX: 1, duration: .6, ease: 'power2.out' }, .2);
+      if (handTag) tl.to(handTag, { opacity: 1, rotation: -2, y: 0, duration: .35, ease: 'power2.out' }, .8);
     });
   });
-
-  // Call ScrollTrigger.refresh() after fonts load
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
-  }
-  window.addEventListener('load', () => ScrollTrigger.refresh());
 })();
 
 /* ==========================================================================
-   5. DEVCON SHUTTER REVEAL ON SCROLL
+   6. DEVCON SHUTTER REVEAL
    ========================================================================== */
-(function setupShutter(){
+(function shutter() {
   const frame = document.getElementById('shutterFrame');
   const wrap = document.getElementById('shutterBlindWrap');
-  if(!frame || !wrap) return;
-
-  if (wrap.children.length === 0) {
-    for(let i=0; i<24; i++){
-      const blind = document.createElement('div');
-      blind.className = 'shutter-blind';
-      blind.style.top = `${i * 4.18}%`;
-      blind.style.transitionDelay = `${i * 0.025}s`;
-      wrap.appendChild(blind);
-    }
+  if (!frame || !wrap) return;
+  for (let i = 0; i < 24; i++) {
+    const b = document.createElement('div');
+    b.className = 'shutter-blind';
+    b.style.top = `${i * 4.18}%`;
+    b.style.transitionDelay = `${i * 0.025}s`;
+    wrap.appendChild(b);
   }
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if(e.isIntersecting){
-        wrap.classList.add('shutter-open');
-        obs.disconnect();
-      }
-    });
-  }, { threshold: 0.15 });
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { wrap.classList.add('shutter-open'); obs.disconnect(); }
+  }), { threshold: .15 });
   obs.observe(frame);
 })();
 
 /* ==========================================================================
-   6. 3D PASSES MOUSE PARALLAX
+   7. 3D PASSES — smooth tilt via quickTo
    ========================================================================== */
-(function setup3DPasses(){
+(function passes() {
   const stage = document.getElementById('passStage');
-  if(!stage) return;
-
+  if (!stage || !hasGSAP) return;
+  const rx = gsap.quickTo(stage, 'rotationX', { duration: .7, ease: 'power3.out' });
+  const ry = gsap.quickTo(stage, 'rotationY', { duration: .7, ease: 'power3.out' });
   stage.addEventListener('pointermove', e => {
-    const rect = stage.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    stage.style.transform = `rotateY(${x * 24}deg) rotateX(${-y * 20}deg)`;
+    const r = stage.getBoundingClientRect();
+    ry(((e.clientX - r.left) / r.width - .5) * 24);
+    rx(-((e.clientY - r.top) / r.height - .5) * 20);
   });
-  stage.addEventListener('pointerleave', () => {
-    stage.style.transform = `rotateY(0deg) rotateX(0deg)`;
-  });
+  stage.addEventListener('pointerleave', () => { rx(0); ry(0); });
 })();
 
 /* ==========================================================================
-   7. TICKER MARQUEE WITH SCROLL DIRECTION REVERSAL
+   8. TICKER — GSAP-driven marquee, speeds up and reverses with scroll (no animation resets)
    ========================================================================== */
-(function setupTickerScrollDirection(){
-  const ticker = document.querySelector('.ticker');
+(function ticker() {
   const track = document.querySelector('.tk-track');
-  if (!ticker || !track) return;
+  if (!track || !hasGSAP || reduced) return;
+  const box = track.parentElement;
+  let x = 0, dir = 1, cur = 1, boost = 0, paused = false;
+  box.addEventListener('pointerenter', () => paused = true);
+  box.addEventListener('pointerleave', () => paused = false);
+  if (hasST) ScrollTrigger.create({
+    start: 0, end: 'max',
+    onUpdate: s => { dir = s.direction === 1 ? 1 : -1; boost = Math.min(Math.abs(s.getVelocity()) / 500, 5); }
+  });
+  gsap.ticker.add((time, dt) => {
+    boost *= .94;
+    cur += (dir - cur) * .06;
+    const target = paused ? 0 : 1;
+    const half = track.scrollWidth / 2;
+    x -= cur * (70 * (1 + boost)) * target * dt / 1000;
+    if (x <= -half) x += half;
+    if (x > 0) x -= half;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  });
+})();
 
-  let lastScrollY = window.scrollY;
-  let scrollVelocity = 0;
-  let currentDirection = 1; // 1 = right (normal), -1 = left (reversed)
+/* ==========================================================================
+   9. MAGNETIC BUTTONS (quickTo — smooth, not re-created tweens)
+   ========================================================================== */
+(function magnetic() {
+  if (!hasGSAP || reduced || !matchMedia('(hover:hover)').matches) return;
+  document.querySelectorAll('.btn').forEach(btn => {
+    const xTo = gsap.quickTo(btn, 'x', { duration: .45, ease: 'power3.out' });
+    const yTo = gsap.quickTo(btn, 'y', { duration: .45, ease: 'power3.out' });
+    btn.addEventListener('pointermove', e => {
+      const r = btn.getBoundingClientRect();
+      xTo((e.clientX - r.left - r.width / 2) * .25);
+      yTo((e.clientY - r.top - r.height / 2) * .25);
+    });
+    btn.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
+  });
+})();
 
-  // Track scroll velocity and direction
-  window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-    const delta = currentScrollY - lastScrollY;
-    scrollVelocity = delta;
-    
-    // Reverse direction on scroll up
-    if (delta < -2) {
-      currentDirection = -1;
-    } else if (delta > 2) {
-      currentDirection = 1;
+/* ==========================================================================
+   10. SPEAKER IMAGE MASK REVEAL
+   ========================================================================== */
+(function maskReveal() {
+  const section = document.getElementById('speaker');
+  const photo = document.querySelector('.polaroid .ph');
+  if (!section || !photo) return;
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    photo.style.clipPath = 'inset(0)';
+    const img = photo.querySelector('img');
+    if (img && hasGSAP) gsap.fromTo(img, { scale: 1.3 }, { scale: 1, duration: 1.2, ease: 'power2.out' });
+    obs.unobserve(e.target);
+  }), { threshold: .3 });
+  obs.observe(section);
+})();
+
+/* ==========================================================================
+   11. LOOT — PINNED HORIZONTAL SCROLL (single scrubbed tween, recalculated on refresh)
+   ========================================================================== */
+(function loot() {
+  if (!hasST || reduced) return;
+  const wrap = document.getElementById('lootPinWrap');
+  const track = document.getElementById('lootTrack');
+  const hint = document.getElementById('lootHint');
+  if (!wrap || !track) return;
+  const dist = () => Math.max(0, track.scrollWidth - window.innerWidth + 40);
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: wrap, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: .8, anticipatePin: 1, invalidateOnRefresh: true }
+  });
+  tl.to(track, { x: () => -dist(), ease: 'none', duration: 1 }, 0);
+  if (hint) tl.to(hint, { opacity: 0, ease: 'none', duration: .15 }, 0);
+})();
+
+/* refresh triggers once fonts / images settle */
+if (hasST) {
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+}
+
+/* ==========================================================================
+   12. COUNTDOWN — before / live / wrapped
+   ========================================================================== */
+(function countdown() {
+  const pad = n => String(n).padStart(2, '0');
+  const boxes = document.querySelectorAll('.cd .box');
+  const live = document.getElementById('cd-live');
+  (function tick() {
+    const now = Date.now();
+    if (now >= EVENT_START && now < EVENT_END) {
+      boxes.forEach(b => b.style.display = 'none');
+      live.textContent = '🔴 LIVE NOW — run to A510!';
+      live.style.display = 'block';
+      return setTimeout(tick, 15000);
     }
-    
-    lastScrollY = currentScrollY;
-  }, { passive: true });
-
-  // Update animation direction based on scroll
-  const updateAnimation = () => {
-    const baseDuration = 24;
-    const speedMultiplier = Math.min(Math.abs(scrollVelocity) / 20, 2); // Speed up on fast scroll
-    const adjustedDuration = baseDuration / (1 + speedMultiplier * 0.5);
-    
-    track.style.animationDirection = currentDirection === 1 ? 'normal' : 'reverse';
-    track.style.animationDuration = `${adjustedDuration}s`;
-    
-    requestAnimationFrame(updateAnimation);
-  };
-  
-  updateAnimation();
-})();
-
-/* ==========================================================================
-   9. MAGNETIC BUTTONS EFFECT
-   ========================================================================== */
-(function setupMagneticButtons(){
-  const buttons = document.querySelectorAll('.btn');
-  if (!buttons.length) return;
-
-  buttons.forEach(btn => {
-    btn.addEventListener('pointermove', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      
-      // Move button toward cursor by a fraction of the distance
-      gsap.to(btn, {
-        x: x * 0.3,
-        y: y * 0.3,
-        duration: 0.3,
-        ease: 'power2.out'
-      });
-    });
-
-    btn.addEventListener('pointerleave', () => {
-      // Snap back to original position
-      gsap.to(btn, {
-        x: 0,
-        y: 0,
-        duration: 0.5,
-        ease: 'elastic.out(1, 0.3)'
-      });
-    });
-  });
-})();
-
-/* ==========================================================================
-   10. IMAGE MASK REVEAL FOR SPEAKER POLAROID
-   ========================================================================== */
-(function setupImageMaskReveal(){
-  const speakerSection = document.getElementById('speaker');
-  const polaroidPhoto = document.querySelector('.polaroid .ph');
-  if (!speakerSection || !polaroidPhoto) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Reveal image with clip-path animation
-        polaroidPhoto.style.clipPath = 'inset(0)';
-        
-        // Also scale down from 1.3 to 1
-        const img = polaroidPhoto.querySelector('img');
-        if (img) {
-          gsap.fromTo(img, 
-            { scale: 1.3 },
-            { scale: 1, duration: 1, ease: 'power2.out' }
-          );
-        }
-        
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-
-  observer.observe(speakerSection);
-})();
-
-/* ==========================================================================
-   11. ENHANCED PARALLAX LAYERS IN HERO SECTION
-   ========================================================================== */
-(function setupHeroParallax(){
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  const hero = document.querySelector('.hero');
-  const heroGhost = document.getElementById('heroGhost');
-  const heroArt = document.getElementById('heroArt');
-  const stickers = [document.getElementById('st1'), document.getElementById('st2'), document.getElementById('st3')];
-  
-  if (!hero) return;
-
-  // Background layer: ghost text moves slower
-  if (heroGhost) {
-    gsap.to(heroGhost, {
-      y: 120,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1
-      }
-    });
-  }
-
-  // Midground layer: hero art moves at medium speed
-  if (heroArt) {
-    gsap.to(heroArt, {
-      y: -60,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1
-      }
-    });
-  }
-
-  // Foreground layer: stickers move faster for depth effect
-  stickers.forEach((sticker, i) => {
-    if (sticker) {
-      const speed = [80, 140, 50][i]; // Different speeds for each sticker
-      gsap.to(sticker, {
-        y: -speed,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: hero,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1
-        }
-      });
+    if (now >= EVENT_END) {
+      boxes.forEach(b => b.style.display = 'none');
+      live.textContent = " LIVE NOW — run to A510!";
+      live.style.background = 'var(--green)';
+      live.style.display = 'block';
+      return;
     }
-  });
+    const diff = EVENT_START - now;
+    document.getElementById('cd-d').textContent = pad(Math.floor(diff / 864e5));
+    document.getElementById('cd-h').textContent = pad(Math.floor(diff / 36e5) % 24);
+    document.getElementById('cd-m').textContent = pad(Math.floor(diff / 6e4) % 60);
+    document.getElementById('cd-s').textContent = pad(Math.floor(diff / 1e3) % 60);
+    setTimeout(tick, 1000);
+  })();
 })();
 
 /* ==========================================================================
-   12. STACKED CARDS FOR FUTURE EPISODES
+   13. REVEAL, FAB, TOAST, COPY
    ========================================================================== */
-(function setupStackedCards(){
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  const futureSection = document.querySelector('.future');
-  const cards = document.querySelectorAll('.ep');
-  if (!futureSection || !cards.length) return;
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-
-  cards.forEach((card, index) => {
-    // Each card scales down and dims as it gets stacked behind
-    gsap.to(card, {
-      scale: 1 - (index * 0.05),
-      opacity: 1 - (index * 0.15),
-      scrollTrigger: {
-        trigger: card,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: true
-      }
-    });
-  });
-})();
-
-/* ==========================================================================
-   13. LOOT SECTION — PINNED HORIZONTAL SCROLL
-   ========================================================================== */
-(function setupLootHorizontalScroll(){
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  const lootPinWrap = document.getElementById('lootPinWrap');
-  const lootSticky = document.getElementById('lootSticky');
-  const lootTrack = document.getElementById('lootTrack');
-  const lootHint = document.getElementById('lootHint');
-
-  if (!lootPinWrap || !lootSticky || !lootTrack) return;
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-
-  // Calculate scroll distance: track width - viewport width + padding
-  const trackWidth = lootTrack.offsetWidth;
-  const scrollDistance = Math.max(0, trackWidth - window.innerWidth + 200);
-
-  // Pin the section and convert vertical scroll to horizontal
-  ScrollTrigger.create({
-    trigger: lootPinWrap,
-    start: 'top top',
-    end: () => `+=${scrollDistance}`,
-    pin: lootSticky,
-    scrub: 1,
-    anticipatePin: 1,
-    onUpdate: (self) => {
-      // Move track horizontally based on scroll progress
-      const progress = self.progress;
-      const xOffset = -progress * scrollDistance;
-      gsap.set(lootTrack, { x: xOffset });
-
-      // Fade out hint as user scrolls
-      if (lootHint) {
-        gsap.set(lootHint, { opacity: 1 - progress * 3 });
-      }
-    }
-  });
-
-  // Refresh on resize
-  window.addEventListener('resize', () => {
-    ScrollTrigger.refresh();
-  });
-})();
-
-/* ==========================================================================
-   8. REAL-TIME COUNTDOWN & SEAT PROOF COUNTER
-   ========================================================================== */
-const target = new Date('2025-10-06T14:00:00+05:30').getTime();
-const pad = n => String(n).padStart(2,'0');
-(function tickCd(){
-  const diff = target - Date.now();
-  if(diff <= 0){
-    document.querySelectorAll('.cd .box').forEach(b=>b.style.display='none');
-    const liveEl = document.getElementById('cd-live');
-    if (liveEl) liveEl.style.display='block';
-    return;
-  }
-  document.getElementById('cd-d').textContent = pad(Math.floor(diff/864e5));
-  document.getElementById('cd-h').textContent = pad(Math.floor(diff/36e5)%24);
-  document.getElementById('cd-m').textContent = pad(Math.floor(diff/6e4)%60);
-  document.getElementById('cd-s').textContent = pad(Math.floor(diff/1e3)%60);
-  setTimeout(tickCd,1000);
-})();
-
-// Scroll reveal observer (ensures all .rev sections fade/slide in smoothly)
 const io = new IntersectionObserver(es => es.forEach(e => {
-  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-}), {threshold: 0.05, rootMargin: '0px 0px -40px 0px'});
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold: .05, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.rev').forEach(el => io.observe(el));
 
-// Seats counter
-const TOTAL = 150; let claimed = 132;
-const seatNum = document.getElementById('seatNum'), seatBar = document.getElementById('seatBar');
-const seatIO = new IntersectionObserver(es => es.forEach(e => {
-  if(!e.isIntersecting) return; seatIO.disconnect();
-  seatBar.style.width = (claimed/TOTAL*100) + '%';
-  const t0 = performance.now();
-  (function count(t){
-    const p = Math.min((t-t0)/1200,1);
-    seatNum.textContent = Math.round(132 * (1-Math.pow(1-p,3)));
-    if(p<1) requestAnimationFrame(count);
-  })(t0);
-}), {threshold:.3});
-const seatsEl = document.querySelector('.seats');
-if (seatsEl) seatIO.observe(seatsEl);
+// Floating register button: slides in after the hero intro and then stays for good
+setTimeout(() => document.getElementById('fab').classList.add('show'), reduced ? 0 : 2400);
 
-// Toast
+// click sound on every register link
+document.querySelectorAll('.btn-claim').forEach(b => b.addEventListener('click', () => AudioSynth.playClick()));
+
 let toastTimeout;
-function showToast(msg){
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => t.classList.remove('show'), 3600);
 }
 
-// Seat claim logic
-let mine = null;
-document.querySelectorAll('.btn-claim').forEach(b => b.addEventListener('click', () => {
-  AudioSynth.playClick();
-  if(mine){ showToast('😌 Already held, builder. Seat #' + mine + ', Monday 2:00, A510.'); return; }
-  claimed++; mine = claimed;
-  seatNum.textContent = claimed; seatBar.style.width = (claimed/TOTAL*100) + '%';
-  document.querySelectorAll('.btn-claim').forEach(x => { x.classList.add('done'); x.textContent = 'Seat #' + mine + ' held ✓'; });
-  showToast('🎉 Seat #' + mine + ' held for you. Mon · 2:00 PM · A510. That was the hard part.');
-  if (typeof confetti !== 'undefined') {
-    confetti({ particleCount: 50, spread: 70, origin: { y: 0.85 } });
-  }
-}));
-
-// Copy insta caption
 const copyBtn = document.getElementById('copyCap');
-if (copyBtn) {
-  copyBtn.addEventListener('click', async () => {
-    AudioSynth.playClick();
-    const txt = document.getElementById('caption').innerText;
-    try {
-      await navigator.clipboard.writeText(txt);
-      showToast('📋 Caption copied. Paste, post, tag us — we repost everything.');
-      if (typeof confetti !== 'undefined') {
-        confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
-      }
-    } catch {
-      showToast('Long-press the caption box to copy 🙂');
-    }
-  });
-}
+if (copyBtn) copyBtn.addEventListener('click', async () => {
+  AudioSynth.playClick();
+  try {
+    await navigator.clipboard.writeText(document.getElementById('caption').innerText);
+    showToast('📋 Caption copied. Paste, post, tag us — we repost everything.');
+    if (typeof confetti !== 'undefined') confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+  } catch {
+    showToast('Long-press the caption box to copy 🙂');
+  }
+});
 
 document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
