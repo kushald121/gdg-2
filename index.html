@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GDG Orientation · Mon 6 Oct · A510 — Free Swags, Founder Talk, Mentorship</title>
-<meta name="description" content="One afternoon. Zero fee. Founder talk on Open Source, GSoC & C4GT mentorship picks, MLH tees, DevCoin & sticker packs. Mon 6 Oct, 2:00 PM, A510 Auditorium, LTCE.">
-<meta property="og:title" content="GDG Orientation — 6 Oct, A510">
+<title>GDG Orientation · Tue 7 Oct · A510 — Free Swags, Founder Talk, Mentorship</title>
+<meta name="description" content="One afternoon. Zero fee. Founder talk on Open Source, GSoC & C4GT mentorship picks, MLH tees, DevCoin & sticker packs. Tue 7 Oct, 2:00 PM, A510 Auditorium, LTCE.">
+<meta property="og:title" content="GDG Orientation — 7 Oct, A510">
 <meta property="og:description" content="Free MLH tees · DevCoin · Stickers · Founder talk · GSoC mentorship. One seat is holding your name.">
 <meta property="og:image" content="images/image.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='13' height='13' fill='%234285F4'/><rect x='17' y='2' width='13' height='13' fill='%23EA4335'/><rect x='2' y='17' width='13' height='13' fill='%23FBBC05'/><rect x='17' y='17' width='13' height='13' fill='%2334A853'/></svg>">
@@ -29,6 +29,7 @@
   --royal:#2A3EB1; --navy:#0E1633; --ink:#101433; --paper:#FAF7EF;
   --grid-l:rgba(16,20,51,.08); --grid-d:rgba(255,255,255,.10);
   --ease-out:cubic-bezier(.2,.8,.2,1);
+  --nav-h: 20px;
   /* reveal uses opacity + individual `translate`, so it never fights with a component's own transform */
   --rt:opacity .7s ease var(--d,0s), translate .85s cubic-bezier(.2,.8,.2,1) var(--d,0s);
 }
@@ -70,6 +71,9 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--royal);outline-offs
 .btn-ink{background:var(--ink);color:var(--paper)}
 .btn-royal{background:var(--royal);color:#fff}
 .btn-red{background:var(--red);color:#fff}
+.btn-mlh{background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);color:#fff;border-color:#ff6b35;box-shadow:4px 4px 0 #d44d1a}
+.btn-mlh:hover{box-shadow:7px 7px 0 #d44d1a}
+.btn-mlh:active{box-shadow:0 0 0 #d44d1a}
 .btn-white{background:#fff}
 .btn-lg{padding:1.1rem 1.8rem;font-size:1.08rem}
 .btn-sm{padding:.55rem 1.05rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
@@ -174,6 +178,119 @@ h1.mega{font-size:clamp(2.2rem,10.2vw,8.6rem);margin:.7rem 0 1.6rem;position:rel
 .cf{position:absolute;pointer-events:none;animation:float 6s ease-in-out infinite;z-index:1}
 @keyframes float{50%{transform:translateY(-14px) rotate(12deg)}}
 
+/* black pill in nav = toast peeking in. Hide it fully until shown */
+#toast{top:84px;transform:translate(-50%,-30px);opacity:0;visibility:hidden;
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s,visibility .3s}
+#toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+
+/* megaphone: no blue box, GDG centred behind it */
+.art-bg{display:none}
+.hero-art .ghost{top:50%;left:50%;right:auto;translate:-50% -50%;
+  font-size:clamp(4.5rem,24vw,9.5rem);opacity:.55;z-index:0}
+.hero-art .ghost span{-webkit-text-stroke:3px var(--ink)}
+.hero-art .mega-wrap{z-index:1;width:78%}
+.hero-art .sticker{z-index:2}
+
+/* claim button: slow, regular heartbeat (pulses on all sides) */
+@keyframes bob{0%,60%,100%{transform:scale(1)}12%{transform:scale(1.08)}24%{transform:scale(1)}36%{transform:scale(1.05)}}
+.bob{animation:bob 2.4s ease-in-out infinite;transform-origin:center}
+.ringed-y{animation:ringy 2.4s ease-out infinite}
+
+/* floating register button: static, tucked in the corner (desktop + mobile) */
+.fab .bob,.fab .btn,.fab .ringed{animation:none}
+.fab .btn{font-size:.9rem;padding:.7rem 1.1rem;box-shadow:3px 3px 0 var(--ink)}
+@media(max-width:600px){
+  .fab{left:auto;right:12px;bottom:12px}
+  .fab .bob,.fab .btn{display:inline-flex;width:auto}
+}
+
+/* GDG-themed buttons (no off-palette orange) */
+.btn-mlh{background:var(--green);color:#fff;border-color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.btn-mlh:hover{box-shadow:7px 7px 0 var(--ink)}
+.btn-mlh:active{box-shadow:0 0 0 var(--ink)}
+.btn{border-width:3px}
+.speaker .btn,.story .btn,.plan .btn{box-shadow:4px 4px 0 var(--yellow)}
+.story .btn:hover{box-shadow:7px 7px 0 var(--yellow)}
+
+/* THE WHITE STRIP FIX: solid neo-brutalist highlight blocks with ink text */
+.hl-w{background:var(--yellow)!important;color:var(--ink)!important;
+  border:3px solid var(--ink);padding:.02em .22em;box-shadow:5px 5px 0 var(--ink);
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;display:inline}
+.plan .hl-w{background:var(--green)!important;color:#fff!important;box-shadow:5px 5px 0 var(--yellow)}
+.story .hl-w{background:var(--red)!important;color:#fff!important;box-shadow:5px 5px 0 var(--yellow)}
+.cta .hl-w{background:var(--ink)!important;color:var(--yellow)!important;box-shadow:5px 5px 0 var(--red)}
+.speaker .hl-w{box-shadow:5px 5px 0 var(--red)}
+
+/* speaker chips: solid colour, ink border, hard shadow */
+.sp-role .chip{color:var(--ink);border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.sp-role .chip:nth-child(1){background:var(--yellow)}
+.sp-role .chip:nth-child(2){background:#fff}
+.sp-role .chip:nth-child(3){background:var(--green);color:#fff}
+.topic{border-width:3px;box-shadow:6px 6px 0 var(--ink)}
+.sp-line b{background:var(--red);color:#fff;padding:0 .3em;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* mobile hero cleanup */
+@media(max-width:600px){
+  header.hero{padding:2rem 0 3rem}
+  .hero-sub{max-width:none}
+  .info-row{gap:.55rem;margin:1.3rem 0}
+  .ic{padding:.5rem .5rem .6rem;box-shadow:3px 3px 0 var(--ink)}
+  .ic::before,.ic::after{display:none}
+  .ic b{font-size:1.45rem}
+  .ic span{font-size:.64rem}
+  .hero-cta{flex-direction:column;align-items:stretch;gap:.9rem}
+  .hero-cta .bob{display:block}
+  .hero-cta .btn{width:100%}
+  .hand-note{font-size:1.25rem}
+  .cd{gap:.45rem}
+  .cd .box{min-width:0;flex:1;padding:.5rem .3rem}
+  .cd .box b{font-size:1.4rem}
+  .hero-art{width:86%;margin-top:1rem}
+  .sticker{font-size:.7rem;padding:.35rem .7rem}
+  .st1{left:0}.st2{right:0}
+  .polaroid{max-width:300px}
+}
+
+body {
+  background-color: #faf6ee;
+  background-image:
+    linear-gradient(rgba(20,24,60,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,24,60,.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.loot, section { background: transparent; } /* remove any solid bg */
+
+.gdg-letters {          /* the wrapper around G, D, G */
+  display: flex;
+  flex-direction: row;
+  writing-mode: horizontal-tb;
+  gap: 6px;
+}
+
+.info-card {
+  border: 3px solid #14183c;
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 #14183c;
+  padding: 14px 12px;
+  transform: rotate(-1.5deg);
+}
+.info-card:nth-child(2) { transform: rotate(1deg); }
+.info-card .label {
+  font-size: 11px; letter-spacing: .15em; font-weight: 700;
+  background: #14183c; color: #fff;
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+}
+.info-card .value {
+  font-size: 2.4rem;      /* bigger 07 / 2:00 / A510 */
+  font-weight: 900; line-height: 1;
+  margin: 8px 0 4px;
+}
+.info-card .sub { font-size: 12px; font-weight: 700; }
+
+.info-card { transition: transform .2s; }
+.info-card:hover { transform: translateY(-4px) rotate(0); }
+
 /* ============ TICKER ============ */
 .ticker{background:var(--yellow);border-block:3px solid var(--ink);overflow:hidden}
 .tk-track{display:flex;width:max-content;will-change:transform}
@@ -247,14 +364,9 @@ h1.mega{font-size:clamp(2.2rem,10.2vw,8.6rem);margin:.7rem 0 1.6rem;position:rel
   .plan .time-pill{font-size:1rem;padding:4px 8px}
 }
 
-/* ============ DEVCON STAGE SHOWCASE ============ */
-.devcon-showcase{background:#07060e;color:#fff;padding:5rem 0;border-block:2px solid var(--ink)}
-.devcon-window-frame{position:relative;width:min(940px,92vw);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:4px solid #221c33;box-shadow:0 25px 80px rgba(0,0,0,0.8);margin:0 auto}
-.shutter-blind{position:absolute;left:0;right:0;height:4.2%;background:linear-gradient(180deg,#3d2212 0%,#1a0f07 60%,#3d2212 100%);border-bottom:1.5px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 3px 6px rgba(0,0,0,0.8);transform-origin:top center;transition:transform 1.4s cubic-bezier(0.77,0,0.175,1);z-index:2;will-change:transform}
-.shutter-open .shutter-blind{transform:scaleY(0.04) translateY(-900%)}
-
 /* ============ LOOT — PINNED HORIZONTAL SCROLL ============ */
-.loot{padding:0;overflow:hidden;background:var(--paper)}
+.loot{padding:48px 16px;overflow:hidden;background:var(--paper); min-height: auto;}
+.loot h2 { margin: 8px 0; }
 .loot-pin-wrap{overflow:hidden;height:100vh}
 .loot-sticky{display:flex;flex-direction:column;justify-content:center;height:100%;padding:3rem 0}
 .loot-header{text-align:center;padding:0 22px;margin-bottom:2.4rem;flex-shrink:0}
@@ -281,7 +393,9 @@ h1.mega{font-size:clamp(2.2rem,10.2vw,8.6rem);margin:.7rem 0 1.6rem;position:rel
 @media(max-width:900px){.story-grid{grid-template-columns:1fr}}
 .story h2{font-size:clamp(2rem,5vw,3.4rem);margin:.8rem 0 1rem}
 .story p.lead{font-size:1.08rem;font-weight:500;max-width:40ch;margin-bottom:1.4rem}
-.cap-box{background:#fff;color:var(--ink);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--yellow);padding:1.1rem 1.2rem;font-size:.92rem;font-weight:500;white-space:pre-line;max-width:440px;margin-bottom:1.1rem}
+.cap-box{background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);color:var(--ink);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--yellow),0 4px 20px rgba(0,0,0,0.1);padding:1.5rem 1.8rem;font-size:.95rem;font-weight:600;white-space:pre-line;max-width:480px;margin-bottom:1.5rem;border-radius:4px;position:relative;overflow:hidden}
+.cap-box::before{content:"";position:absolute;top:0;right:0;width:60px;height:60px;background:linear-gradient(135deg,var(--blue) 0%,var(--royal) 100%);opacity:.1;border-radius:0 0 0 100%}
+.cap-box::after{content:"";position:absolute;bottom:0;left:0;width:40px;height:40px;background:linear-gradient(135deg,var(--red) 0%,var(--yellow) 100%);opacity:.1;border-radius:100% 0 0 0}
 .phone{justify-self:center;width:min(330px,86%);aspect-ratio:9/16;border:3px solid var(--ink);border-radius:26px;background:var(--navy);--g:var(--grid-d);padding:20px 18px;display:flex;flex-direction:column;justify-content:space-between;rotate:3deg;box-shadow:12px 12px 0 var(--yellow);position:relative}
 .phone .dots{display:flex;gap:6px}
 .phone .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
@@ -328,6 +442,223 @@ footer a:hover{color:var(--yellow)}
   .rev{opacity:1;translate:none}
   .fab{transform:none;opacity:1;pointer-events:auto}
 }
+/* ===== HERO v3: one row, fewer shapes ===== */
+.cf,.sticker,.hand-note,.art-bg,.seats small{display:none!important}
+
+.hero-sub{max-width:none}
+.hero-sub b{background:var(--yellow);color:var(--ink)}
+
+.hero-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;
+  gap:.9rem;margin:1.4rem 0 1.6rem;max-width:680px}
+
+/* LEFT: two buttons only */
+header.hero .hero-cta{display:flex;flex-direction:column;align-items:stretch;gap:.9rem}
+header.hero .hero-cta .bob{display:block}
+header.hero .hero-cta .btn{width:100%;padding:.85rem .9rem;font-size:.95rem;white-space:nowrap}
+
+/* MIDDLE: megaphone */
+header.hero .hero-art{width:clamp(80px,23vw,170px);aspect-ratio:auto;margin:0;display:block}
+header.hero .mega-wrap{width:100%;z-index:1}
+
+/* RIGHT: GDG, solid letters stacked beside the megaphone */
+header.hero .ghost{position:static;translate:none;opacity:1;z-index:auto;
+  display:flex;flex-direction:column;align-items:center;
+  font-size:clamp(2.3rem,11vw,3.8rem);line-height:.85;gap:.08em}
+header.hero .ghost span{-webkit-text-stroke:2.5px var(--ink)}
+
+@media(min-width:700px){
+  .hero-row{gap:1.6rem}
+  header.hero .hero-art{width:190px}
+  header.hero .ghost{flex-direction:row;font-size:5.5rem;gap:.05em}
+}
+
+/* tidy info cards + countdown on phones */
+@media(max-width:600px){
+  .info-row{gap:.5rem;margin:0 0 1.2rem}
+  .ic{padding:.5rem;box-shadow:3px 3px 0 var(--ink)}
+  .ic::before,.ic::after{display:none}
+  .ic b{font-size:1.4rem}
+  .ic span{font-size:.62rem}
+  .cd{gap:.4rem}
+  .cd .box{min-width:0;flex:1;padding:.45rem .3rem}
+  .cd .box b{font-size:1.35rem}
+}
+
+/* ===== PASTED PATCH (from file 1) ===== */
+
+/* 1. HERO: clear the navbar + put CTA row (buttons/megaphone/GDG) BELOW the 3 info cards */
+#heroGrid{display:flex;flex-direction:column;align-items:flex-start;padding-top:2.6rem;padding-bottom:4rem}
+#heroGrid>*{max-width:100%}
+#heroGrid .info-row{order:3;width:100%}
+#heroGrid .hero-row{order:4;width:100%}
+#heroGrid .hand-note{order:5}
+#heroGrid .cd{order:6}
+#heroGrid .seats{order:7;width:100%}
+
+/* ===== stickers around megaphone (position unchanged) ===== */
+header.hero .hero-art{overflow:visible;padding:1rem 0}   /* equal top/bottom, so the megaphone stays centred */
+header.hero .hero-art .sticker{display:inline-block!important;z-index:2;
+  font-size:.5rem;padding:.22rem .5rem;border-width:2px;letter-spacing:.02em}
+header.hero .hero-art .st1{top:-2%;left:-26%}
+header.hero .hero-art .st2{bottom:26%;right:-38%}
+header.hero .hero-art .st3{bottom:-4%;left:-12%}
+.spark{position:absolute;left:-20%;top:36%;width:24px;height:24px;z-index:2;animation:sparkle 3.2s ease-in-out infinite}
+@keyframes sparkle{50%{transform:translateY(-6px) rotate(25deg) scale(1.1)}}
+
+/* ===== HERO v5: bigger, bolder GDG with breathing room ===== */
+/* ===== HERO v6: bigger megaphone, tags around it (not on it), bigger GDG ===== */
+
+/* shared: megaphone gets padded space; tags live in the padding */
+header.hero .hero-art{position:relative;overflow:visible;display:block;aspect-ratio:auto}
+header.hero .mega-wrap{width:100%}
+header.hero .hero-art .sticker{display:inline-block!important;z-index:2}
+
+/* ---------- DESKTOP ---------- */
+@media(min-width:700px){
+  .hero-row{max-width:1096px;gap:2.5rem}
+  header.hero .hero-art{width:320px;margin:0;padding:2.8rem 0 3.2rem}
+  header.hero .hero-art .sticker{font-size:.78rem;padding:.38rem .9rem}
+  header.hero .hero-art .st1{top:0;left:0;right:auto;bottom:auto}          /* FREE ENTRY: above, left */
+  header.hero .hero-art .st2{bottom:1.4rem;right:0;left:auto;top:auto}     /* 150 SEATS: below, right */
+  header.hero .hero-art .st3{bottom:0;left:.4rem;right:auto;top:auto}      /* SWAG DROP: below, left */
+  header.hero .ghost{font-size:9.5rem;gap:.05em}
+  header.hero .ghost span{-webkit-text-stroke:4px var(--ink);text-shadow:6px 6px 0 var(--ink)}
+}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:699px){
+  /* row 1: buttons | megaphone     row 2: GDG across the full width */
+  .hero-row{grid-template-columns:1fr 1fr;
+    grid-template-areas:"cta art" "ghost ghost";
+    gap:1.2rem .8rem;align-items:center}
+  header.hero .hero-cta{grid-area:cta;min-width:0}
+  header.hero .hero-art{grid-area:art;width:100%;margin:0;padding:1.9rem 0 2.7rem}
+  header.hero .hero-art .sticker{font-size:.55rem;padding:.25rem .55rem}
+  header.hero .hero-art .st1{top:0;left:0;right:auto;bottom:auto}
+  header.hero .hero-art .st2{bottom:1.25rem;right:0;left:auto;top:auto}
+  header.hero .hero-art .st3{bottom:0;left:.2rem;right:auto;top:auto}
+
+  header.hero .ghost{grid-area:ghost;
+    flex-direction:row;              /* change to "column" if you want it vertical again */
+    justify-content:center;
+    font-size:clamp(4.5rem,24vw,7rem);gap:.05em;line-height:.9}
+  header.hero .ghost span{-webkit-text-stroke:3.5px var(--ink);text-shadow:4px 4px 0 var(--ink)}
+}
+
+@media(prefers-reduced-motion:reduce){.spark{animation:none}}
+
+/* 2. HIGHLIGHTS: stop labels covering the text behind them */
+h1,h2,h3{line-height:1.05}
+h1 .hl,h2 .hl{line-height:inherit}              /* your .hl{line-height:1.9} was inflating heading lines */
+h2 .hl-w{display:inline-block;margin-top:.22em;line-height:1.1;padding:.06em .24em}
+.sp-name .hl-w{margin-top:.3em;rotate:-1.5deg}
+.sp-line,.story p.lead,.hero-sub{line-height:1.9}   /* room for wrapped highlighted lines */
+.sp-line b{padding:.1em .35em}
+
+/* 3. SPEAKER CHIPS: black text (the later .sp-role .chip{color:#fff} was winning) */
+.speaker .sp-role .chip,
+.speaker .sp-role .chip:nth-child(n){color:var(--ink)!important}
+
+/* 4. SHARE CARD (neo-brutalism) */
+.share-card{max-width:500px;margin:0 0 1.7rem;padding:0;background:#fff;color:var(--ink);
+  border:3px solid var(--ink);box-shadow:8px 8px 0 var(--yellow);font-family:'Space Grotesk',sans-serif;rotate:-1deg}
+.share-card::before{z-index:2;font-family:'Archivo Black';font-size:.72rem;letter-spacing:.06em;box-shadow:3px 3px 0 var(--ink)}
+.sc-head{display:flex;align-items:center;gap:6px;padding:.65rem 1rem;background:var(--ink);color:#fff;
+  font-weight:700;font-size:.7rem;letter-spacing:.16em}
+.sc-head i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
+.sc-head span{margin-left:auto;opacity:.8}
+#caption{padding:1.2rem 1.3rem 1.4rem;font-weight:600;font-size:.95rem;line-height:1.5;white-space:normal;
+  background-image:radial-gradient(rgba(16,20,51,.13) 1.2px,transparent 1.2px);background-size:14px 14px}
+#caption .cl{padding:.22rem 0}
+#caption .cl-top{display:inline-block;background:var(--blue);color:#fff;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+  padding:.15rem .6rem;font-weight:800;letter-spacing:.04em;font-size:.85rem;margin-bottom:.3rem}
+#caption .line-title{display:inline-block;background:var(--yellow);border:2.5px solid var(--ink);padding:.1rem .6rem;
+  font-family:'Archivo Black';text-transform:uppercase;font-size:1rem;margin:.2rem 0 .35rem;rotate:-1deg}
+#caption .cl-li::before{content:"";display:inline-block;width:10px;height:10px;margin-right:.6rem;border:2px solid var(--ink);
+  background:var(--c,var(--red));rotate:45deg}
+#caption .cl-end{font-weight:800;margin-top:.3rem}
+#caption .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.6rem}
+#caption .tag{border:2.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink);padding:.1rem .6rem;font-weight:800;font-size:.8rem}
+.story .btn-copy{background:var(--green);color:var(--ink);padding:1rem 1.6rem;font-size:1.02rem;
+  box-shadow:5px 5px 0 var(--yellow);animation:ringg 2.4s ease-out infinite}
+.story .btn-copy:hover{box-shadow:8px 8px 0 var(--yellow)}
+.story .btn-copy:active{box-shadow:0 0 0 var(--yellow)}
+.story .btn-copy.done{background:var(--yellow);animation:none}
+@keyframes ringg{0%{box-shadow:5px 5px 0 var(--yellow),0 0 0 0 rgba(52,168,83,.7)}80%,100%{box-shadow:5px 5px 0 var(--yellow),0 0 0 18px rgba(52,168,83,0)}}
+
+/* MENTOR BOX */
+.mentor{position:relative;max-width:480px;margin-top:2.2rem;padding:1.6rem 1.4rem 1.4rem;background:var(--red);color:#fff;
+  border:3px solid var(--ink);box-shadow:8px 8px 0 var(--yellow);rotate:1deg}
+.mentor .badge{position:absolute;top:-16px;left:16px;background:var(--yellow);color:var(--ink);border:3px solid var(--ink);
+  padding:.15rem .75rem;font-family:'Archivo Black';font-size:.72rem;letter-spacing:.08em;rotate:-3deg;box-shadow:3px 3px 0 var(--ink)}
+.mentor h3{font-size:1.6rem;margin-bottom:.5rem}
+.mentor p{font-weight:500;font-size:.95rem}
+.m-stats{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.m-stats span{background:#fff;color:var(--ink);border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+  padding:.2rem .65rem;font-weight:700;font-size:.8rem}
+.m-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.2rem}
+.m-steps div{background:var(--ink);border:2px solid #fff;padding:.5rem .3rem;font-weight:700;font-size:.78rem;text-align:center;line-height:1.25}
+.m-steps b{display:block;font-family:'Archivo Black';color:var(--yellow);font-size:1.15rem}
+
+/* 5. PHONE TICKET */
+.phone{aspect-ratio:auto;min-height:600px;justify-content:flex-start;gap:.9rem;animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-10px)}}
+.phone .pstick{top:26%;animation:wob 2.4s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-2deg) scale(1.07)}}
+.p-top{display:flex;justify-content:space-between;align-items:center}
+.p-admit{background:var(--green);color:var(--ink);border:2px solid var(--ink);font-family:'Archivo Black';font-size:.62rem;letter-spacing:.08em;padding:.2rem .6rem}
+.p-spk{display:flex;align-items:center;gap:.75rem;padding:.6rem;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.07)}
+.p-av{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--yellow);color:var(--ink);
+  border:3px solid var(--ink);box-shadow:0 0 0 3px var(--yellow);font-family:'Archivo Black';font-size:.95rem}
+.p-spk b{display:block;font-size:.95rem;line-height:1.2}
+.p-spk small{font-weight:700;font-size:.72rem;color:var(--yellow);letter-spacing:.08em}
+.p-agenda{list-style:none}
+.p-agenda li{display:flex;align-items:center;gap:.6rem;padding:.3rem 0;font-weight:700;font-size:.8rem}
+.p-agenda li i{flex:none;width:11px;height:11px;border-radius:50%;background:var(--c);border:2px solid #fff}
+.p-agenda li span{min-width:2.5rem;color:var(--yellow);font-family:'Archivo Black';font-size:.78rem}
+.p-perf{position:relative;margin:.5rem -18px;border-top:2px dashed rgba(255,255,255,.45)}
+.p-perf::before,.p-perf::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--royal);border:3px solid var(--ink)}
+.p-perf::before{left:-11px}.p-perf::after{right:-11px}
+.p-stub{margin-top:auto}
+.p-barcode{height:36px;margin-bottom:.5rem;background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 4px,#fff 4px 5px,transparent 5px 9px,#fff 9px 12px,transparent 12px 14px)}
+
+/* ===== HERO v7: bigger ORIENTATION, GDG tiles, ambient confetti ===== */
+#heroConfetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ORIENTATION: bigger everywhere */
+header.hero .wrap{max-width:1360px}
+.brk{display:none}
+@media(min-width:700px){
+  h1.mega{font-size:clamp(4rem,11.6vw,10.5rem)}
+}
+@media(max-width:699px){
+  /* two lines: ORIENT / ATION, filling the full width */
+  h1.mega{display:block;white-space:normal;font-size:calc((100vw - 44px) / 4.5);line-height:.98}
+  .brk{display:block}
+}
+
+/* GDG: three alphabet-block tiles instead of loose outlined letters */
+header.hero .ghost{display:flex;flex-direction:row;align-items:center;justify-content:center;
+  gap:.8rem;font-size:1rem;line-height:1;--tile:clamp(70px,22vw,96px)}
+header.hero .ghost span.gt{display:grid;place-items:center;width:var(--tile);height:var(--tile);
+  font-family:'Archivo Black';font-size:calc(var(--tile) * .62);line-height:1;
+  border:4px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--ink);
+  -webkit-text-stroke:0;text-shadow:none;
+  animation:tileBob 3.2s ease-in-out infinite;transition:rotate .25s var(--ease-out)}
+header.hero .ghost span.gt:hover{rotate:0deg}
+header.hero .ghost .g1{background:var(--blue);color:#fff;rotate:-5deg}
+header.hero .ghost .g2{background:var(--red);color:#fff;rotate:3deg;animation-delay:-1s}
+header.hero .ghost .g3{background:var(--yellow);color:var(--ink);rotate:-2deg;animation-delay:-2s}
+@keyframes tileBob{50%{translate:0 -8px}}
+@media(min-width:700px){
+  header.hero .ghost{--tile:120px;gap:1rem}
+}
+
+/* mobile: stop the two tags overlapping */
+@media(max-width:699px){
+  header.hero .hero-art .st2{bottom:1.7rem;right:0}
+  header.hero .hero-art .st3{bottom:0;left:.2rem}
+}
 </style>
 </head>
 <body>
@@ -340,7 +671,7 @@ footer a:hover{color:var(--yellow)}
   <div class="nav-in">
     <a class="logo" href="#top"><span class="sq"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></span>GDG&nbsp;LTCE</a>
     <div class="nav-links" id="navLinks">
-      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#devcon">DevCon</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Story</a>
+      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Story</a>
     </div>
     <div class="nav-right">
       <span class="nav-live"><i></i>Free entry</span>
@@ -350,68 +681,61 @@ footer a:hover{color:var(--yellow)}
 </nav>
 
 <!-- HERO -->
-<header class="hero gridbg" id="top">
-  <div class="ghost" id="heroGhost" aria-hidden="true"><span class="g1">G</span><span class="g2">D</span><span class="g3">G</span></div>
-  <svg class="cf" style="top:12%;left:3%;width:34px" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)"/></svg>
-  <svg class="cf" style="top:70%;left:48%;width:26px;animation-delay:1.2s" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--green)"/></svg>
-  <svg class="cf" style="top:20%;right:5%;width:40px;animation-delay:.6s" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--blue)" stroke-width="5"/></svg>
+<header class="hero" id="top">
+  <canvas id="heroConfetti" aria-hidden="true"></canvas>
+<div class="wrap" id="heroGrid">
+  <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
+  <h1 class="mega" id="heroMega" aria-label="Orientation"><span id="megaText" aria-hidden="true">ORIENTATION</span><span class="hl-bar" id="heroHlBar"></span></h1>
 
-  <div class="wrap" id="heroGrid">
-    <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
-    <h1 class="mega" id="heroMega" aria-label="Orientation"><span id="megaText" aria-hidden="true">ORIENTATION</span><span class="hl-bar" id="heroHlBar"></span></h1>
+  <p class="hero-sub" id="heroSub">You want <b>skills that show</b>, <b>a crew that builds</b>, <b>swag that flexes</b>. We packed all three into one afternoon.</p>
 
-    <div class="hero-grid">
-      <div>
-        <p class="hero-sub" id="heroSub">You want <b>skills that show</b>, <b>a crew that builds</b>, <b>swag that flexes</b>. We packed all three into one afternoon.</p>
-
-        <div class="info-row" id="heroInfo">
-          <div class="ic ic-date"><small>DATE</small><b>06</b><span>OCT · MONDAY</span></div>
-          <div class="ic ic-time"><small>TIME</small><b>2:00</b><span>PM → 4:30 PM</span></div>
-          <div class="ic ic-venue"><small>VENUE</small><b>A510</b><span>Auditorium · LTCE</span></div>
-        </div>
-
-        <div class="hero-cta" id="heroCta">
-          <span class="bob"><a class="btn btn-lg btn-claim ringed-y" id="heroClaimBtn" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim my seat — 7 sec</a></span>
-          <a class="btn btn-lg btn-white" href="#perks">Peek the perks ↓</a>
-        </div>
-        <p class="hand hand-note" id="heroHandNote">we saved a seat with your name on it
-          <svg width="52" height="26" viewBox="0 0 60 30" fill="none" stroke="var(--royal)" stroke-width="3" stroke-linecap="round"><path d="M2 8c14 16 34 18 50 8m0 0l-8-2m8 2l-3 8"/></svg></p>
-
-        <div class="cd" id="cd">
-          <div class="box"><b id="cd-d">--</b><span>DAYS</span></div>
-          <div class="box"><b id="cd-h">--</b><span>HRS</span></div>
-          <div class="box"><b id="cd-m">--</b><span>MIN</span></div>
-          <div class="box"><b id="cd-s">--</b><span>SEC</span></div>
-          <div class="cd-live" id="cd-live">🔴 LIVE NOW — run to A510!</div>
-        </div>
-        <div class="seats" id="heroSeats">
-          <div class="row"><span>Seats claimed</span><b><span id="seatNum">0</span> / 150</b></div>
-          <div class="track"><div class="fill" id="seatBar"></div></div>
-          <small>…by people from your own classes. Story proofs inside ↓</small>
-        </div>
-      </div>
-
-      <div class="hero-art" id="heroArt">
-        <div class="art-bg gridbg" aria-hidden="true"></div>
-        <div class="mega-wrap" id="megaWrap">
-          <svg class="mega-svg" id="megaSvg" viewBox="0 0 230 180" aria-hidden="true">
-            <g id="soundWaves">
-              <path class="sw sw1" d="M142 56c8 6 8 44 0 52" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
-              <path class="sw sw2" d="M162 42c14 12 14 68 0 80" fill="none" stroke="var(--yellow)" stroke-width="4.5" stroke-linecap="round"/>
-              <path class="sw sw3" d="M182 28c20 18 20 100 0 118" fill="none" stroke="var(--green)" stroke-width="4.5" stroke-linecap="round"/>
-            </g>
-            <path d="M28 78 L118 34 L118 128 L28 100 Z" fill="var(--red)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
-            <ellipse cx="118" cy="81" rx="16" ry="47" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5"/>
-            <rect x="42" y="98" width="22" height="52" rx="8" fill="var(--blue)" stroke="var(--ink)" stroke-width="5" transform="rotate(-14 53 124)"/>
-            <path d="M20 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="var(--green)" stroke="var(--ink)" stroke-width="3"/>
-          </svg>
-        </div>
-        <span class="sticker st1" id="st1">FREE ENTRY</span>
-        <span class="sticker st2" id="st2">150 SEATS ONLY</span>
-        <span class="sticker st3" id="st3">SWAG DROP 🎁</span>
-      </div>
+  <!-- buttons -> megaphone -> GDG, all in one row -->
+  <div class="hero-row">
+    <div class="hero-cta" id="heroCta">
+      <span class="bob"><a class="btn btn-claim ringed-y" id="heroClaimBtn" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim my seat</a></span>
+      <a class="btn btn-white" href="#perks">See perks ↓</a>
     </div>
+
+    
+    <div class="hero-art" id="heroArt">
+      <div class="mega-wrap" id="megaWrap">
+        <svg class="mega-svg" id="megaSvg" viewBox="0 0 230 180" aria-hidden="true">
+          <g id="soundWaves">
+            <path class="sw sw1" d="M142 56c8 6 8 44 0 52" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
+            <path class="sw sw2" d="M162 42c14 12 14 68 0 80" fill="none" stroke="var(--yellow)" stroke-width="4.5" stroke-linecap="round"/>
+            <path class="sw sw3" d="M182 28c20 18 20 100 0 118" fill="none" stroke="var(--green)" stroke-width="4.5" stroke-linecap="round"/>
+          </g>
+          <path d="M28 78 L118 34 L118 128 L28 100 Z" fill="var(--red)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+          <ellipse cx="118" cy="81" rx="16" ry="47" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5"/>
+          <rect x="42" y="98" width="22" height="52" rx="8" fill="var(--blue)" stroke="var(--ink)" stroke-width="5" transform="rotate(-14 53 124)"/>
+        </svg>
+      </div>
+      <!-- kept so the intro script still finds them; hidden by CSS -->
+      <span class="sticker st1" id="st1">FREE ENTRY</span><span class="sticker st2" id="st2">150 SEATS ONLY</span><span class="sticker st3" id="st3">SWAG DROP 🎁</span>
+      
+    </div>
+
+<div class="ghost" id="heroGhost" aria-hidden="true"><span class="gt g1">G</span><span class="gt g2">D</span><span class="gt g3">G</span></div>  </div>
+  <p class="hand hand-note" id="heroHandNote"></p>
+
+  <div class="info-row" id="heroInfo">
+    <div class="ic ic-date"><small>DATE</small><b>07 OCT </b><span> TUESDAY</span></div>
+    <div class="ic ic-time"><small>TIME</small><b>2:00PM → 4:30 PM</b></div>
+    <div class="ic ic-venue"><small>VENUE</small><b>A510</b><span>Auditorium · LTCE</span></div>
   </div>
+
+  <div class="cd" id="cd">
+    <div class="box"><b id="cd-d">--</b><span>DAYS</span></div>
+    <div class="box"><b id="cd-h">--</b><span>HRS</span></div>
+    <div class="box"><b id="cd-m">--</b><span>MIN</span></div>
+    <div class="box"><b id="cd-s">--</b><span>SEC</span></div>
+    <div class="cd-live" id="cd-live">🔴 LIVE NOW — run to A510!</div>
+  </div>
+  <div class="seats" id="heroSeats">
+    <div class="row"><span>Seats claimed</span><b><span id="seatNum">0</span> / 150</b></div>
+    <div class="track"><div class="fill" id="seatBar"></div></div>
+  </div>
+</div>
 </header>
 
 <!-- TICKER -->
@@ -436,7 +760,7 @@ footer a:hover{color:var(--yellow)}
         <span class="tape"></span><span class="tape t2"></span>
         <div class="ph">
           <div class="ph-fallback">SW</div>
-          <img src="assets/image.png" alt="Shankar Warang — guest speaker" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='src/assets/image.png';}else{this.style.display='none';}">
+          <img src="https://drive.google.com/thumbnail?id=1yifgnfOlW5XatQA2DzrTW_b64KsuHgFG&sz=w800" alt="Shankar Warang — guest speaker" onerror="this.src='https://lh3.googleusercontent.com/d/1yifgnfOlW5XatQA2DzrTW_b64KsuHgFG'">
         </div>
         <div class="cap">the real one, in person →</div>
       </div>
@@ -461,7 +785,7 @@ footer a:hover{color:var(--yellow)}
     <div class="sec-head">
       <div><p class="lab rev" style="--c:var(--blue)"><i></i>02 / What's in it for you</p>
       <h2 class="rev" style="--d:.06s">Why you'll <span class="hl">actually</span> come</h2></div>
-      <p class="hand rev" style="--d:.12s">skim now, thank yourself monday ↷</p>
+      <p class="hand rev" style="--d:.12s">skim now, thank yourself tuesday ↷</p>
     </div>
     <div class="bento">
       <article class="card c-a rev" style="--r:-1deg">
@@ -555,28 +879,10 @@ footer a:hover{color:var(--yellow)}
           <div class="dot-wrap"><div class="dot-pulse"></div><div class="dot-ring"></div></div>
           <div class="row-body">
             <b>Done. Homework: none.</b>
-            <small>Optional after-credits: workshops on 7 &amp; 8 Oct ↓</small>
+            <small>Optional after-credits: workshops on Tuesday ↓</small>
           </div>
         </li>
       </ul>
-    </div>
-  </div>
-</section>
-
-<!-- DEVCON STAGE SHOWCASE -->
-<section class="devcon-showcase" id="devcon">
-  <div class="wrap" style="text-align:center;">
-    <p class="lab" style="justify-content:center;--c:var(--yellow);margin-bottom:0.8rem;"><i></i>04 // THE MAIN STAGE</p>
-    <h2 style="font-size:clamp(2.4rem,6vw,4rem);margin-bottom:1.2rem;">What is GDG DevCon?</h2>
-    <p style="font-size:1.1rem;color:rgba(255,255,255,0.85);max-width:48ch;margin:0 auto 2.5rem;">The biggest student developer convergence at LTCE. Zero fluff, pure building.</p>
-
-    <div class="devcon-window-frame" id="shutterFrame">
-      <img src="assets/committee.jpg" alt="GDG Committee" onerror="this.src='images/image.png'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
-      <div id="shutterBlindWrap" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,6,14,0.1) 0%,rgba(7,6,14,0.85) 100%);z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;text-align:left;">
-        <span class="chip" style="align-self:flex-start;background:var(--yellow);color:var(--ink);border-color:#fff;margin-bottom:0.6rem;">WHERE BUILDERS MEET</span>
-        <h3 style="font-size:clamp(1.6rem,3.5vw,2.6rem);color:#fff;">450+ Attendees · 12 Keynotes · 6 Labs · ₹1.5L Loot</h3>
-      </div>
     </div>
   </div>
 </section>
@@ -586,7 +892,7 @@ footer a:hover{color:var(--yellow)}
   <div class="loot-pin-wrap" id="lootPinWrap">
     <div class="loot-sticky" id="lootSticky">
       <div class="loot-header">
-        <p class="lab" style="justify-content:center;--c:var(--green);margin-bottom:.6rem"><i></i>05 / The loot table</p>
+        <p class="lab" style="justify-content:center;--c:var(--green);margin-bottom:.6rem"><i></i>04 / The loot table</p>
         <h2 style="font-size:clamp(2rem,5.4vw,3.6rem)">Walk out <span class="hl">loaded</span></h2>
         <p class="hand" style="font-size:1.3rem;margin-top:.3rem">price tag: ₹0 (yes, really)</p>
       </div>
@@ -629,7 +935,7 @@ footer a:hover{color:var(--yellow)}
 <!-- 3D DEVCON PASS SECTION -->
 <section class="pass-section" id="passes">
   <div class="wrap" style="text-align:center;">
-    <p class="lab rev" style="justify-content:center;--c:var(--royal);margin-bottom:0.8rem;"><i></i>06 // EXCLUSIVE ACCESS</p>
+    <p class="lab rev" style="justify-content:center;--c:var(--royal);margin-bottom:0.8rem;"><i></i>05 // EXCLUSIVE ACCESS</p>
     <h2 class="rev" style="--d:.06s;font-size:clamp(2.4rem,6vw,4.4rem);">Your All-Access DevCon Pass</h2>
     <p class="rev" style="--d:.12s;color:rgba(255,255,255,0.75);font-size:1.15rem;max-width:44ch;margin:0 auto 2rem;">Move your cursor to tilt the passes in 3D perspective.</p>
 
@@ -651,9 +957,9 @@ footer a:hover{color:var(--yellow)}
 <section class="future gridbg">
   <div class="wrap">
     <div class="sec-head">
-      <div><p class="lab rev" style="--c:var(--red)"><i></i>07 / After-credits</p>
-      <h2 class="rev" style="--d:.06s">Monday is <span class="hl">episode 1</span></h2></div>
-      <p class="hand rev" style="--d:.12s">say yes to monday. decide the rest after. (spoiler: everyone says yes)</p>
+      <div><p class="lab rev" style="--c:var(--red)"><i></i>06 / After-credits</p>
+      <h2 class="rev" style="--d:.06s">Tuesday is <span class="hl">episode 1</span></h2></div>
+      <p class="hand rev" style="--d:.12s">say yes to tuesday. decide the rest after. (spoiler: everyone says yes)</p>
     </div>
     <div class="eps">
       <article class="ep rev" style="--ec:var(--blue);--r:-1.4deg"><div class="bar"></div><div class="in"><span class="no">ep. 02 →</span><h3>New Tech Updates</h3><p>Monthly drop of what actually changed in tech. No newsletter spam, just the good bits.</p></div></article>
@@ -667,36 +973,63 @@ footer a:hover{color:var(--yellow)}
 <section class="story gridbg" id="story">
   <div class="wrap story-grid">
     <div>
-      <p class="lab rev" style="--c:var(--yellow)"><i></i>08 / Flex it</p>
+      <p class="lab rev" style="--c:var(--yellow)"><i></i>07 / Flex it</p>
       <h2 class="rev" style="--d:.06s">Be the friend who <span class="hl-w">tells the group chat</span></h2>
       <p class="lead rev" style="--d:.12s">You scrolled this far — curious, like us. That's the whole qualification. Screenshot the card, story it, tag us. We repost every single one.</p>
-      <div class="cap-box rev" style="--d:.18s" id="caption">🚨 MON · 6 OCT · 2:00 PM · A510
-GDG Orientation Day =
-🎤 founder talk (open source, zero→PR)
-🧭 GSoC & C4GT mentorship picks
-🎁 MLH tees · stickers · DevCoin — all FREE
-One afternoon. Zero fee. Say yes.
-#GDGLTCE #Orientation #OpenSource</div>
-      <div class="rev" style="--d:.24s"><button class="btn btn-white" id="copyCap">📋 Copy insta caption</button></div>
-    </div>
-    <div class="phone gridbg rev" id="instaPhone" style="--d:.1s">
-      <div>
-        <div class="dots"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
-        <p class="psub" style="margin-top:14px;color:#fff">GDG LTCE · ORIENTATION</p>
-      </div>
-      <div>
-        <div class="pdate">6 OCT</div>
-        <p class="psub" style="color:var(--yellow)">2:00–4:30 PM · A510</p>
-        <div class="pline"></div>
-        <p style="font-weight:700;font-size:.95rem">🎤 Shankar Warang — Open Source, live &amp; unfiltered</p>
-      </div>
-      <div>
-        <div class="prow">
-          <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="#fff" stroke-width="8"/><text x="100" y="122" text-anchor="middle" font-family="Archivo Black" font-size="30" fill="#fff">MLH</text></svg>
-          <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="#fff" stroke-width="8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="44" fill="var(--ink)">&lt;/&gt;</text></svg>
-          <svg viewBox="0 0 200 200"><path d="M100 8l10 26 26 10-26 10-10 26-10-26-26-10 26-10z" fill="var(--red)" stroke="#fff" stroke-width="8" transform="scale(1.6) translate(-38 -18)"/></svg>
+
+      <div class="share-card rev" style="--d:.18s">
+        <div class="sc-head"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i><span>LINKEDIN CAPTION</span></div>
+        <div id="caption">
+          <div class="cl"><span class="cl-top">TUE · 7 OCT · 2:00 PM · A510</span></div>
+          <div class="cl"><span class="line-title">GDG Orientation Day =</span></div>
+          <div class="cl cl-li" style="--c:var(--blue)">Founder talk (open source, zero→PR)</div>
+          <div class="cl cl-li" style="--c:var(--red)">GSoC &amp; C4GT mentorship picks</div>
+          <div class="cl cl-li" style="--c:var(--green)">MLH tees · stickers · DevCoin — all FREE</div>
+          <div class="cl cl-end">One afternoon. Zero fee. Say yes.</div>
+          <div class="cl tags"><span class="tag" style="background:var(--blue);color:#fff">#GDGLTCE</span> <span class="tag" style="background:var(--yellow)">#Orientation</span> <span class="tag" style="background:var(--green);color:#fff">#OpenSource</span></div>
         </div>
-        <p class="psub" style="text-align:center;margin-top:10px;color:rgba(255,255,255,.7)">SCREENSHOT → STORY → TAG @GDG.LTCE</p>
+      </div>
+
+      <div class="rev" style="--d:.24s"><button class="btn btn-copy" id="copyCap">📋 Copy LinkedIn caption</button></div>
+
+      <div class="mentor rev" style="--d:.3s">
+        <span class="badge">LIMITED SPOTS</span>
+        <h3>Want to get mentored?</h3>
+        <p>Join the waitlist to get mentored for your job and open source. No attendance will get you that.</p>
+        <div class="m-stats"><span>GSoC</span><span>C4GT</span><span>50+ builders</span></div>
+        <div class="m-steps">
+          <div><b>1</b>Join the waitlist</div>
+          <div><b>2</b>Get picked</div>
+          <div><b>3</b>Ship your first PR</div>
+        </div>
+        <a href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener" class="btn btn-white">Join waitlist →</a>
+      </div>
+    </div>
+
+    <div class="phone gridbg rev" id="instaPhone" style="--d:.1s">
+      <div class="p-top">
+        <div class="dots"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
+        <span class="p-admit">ADMIT ONE · FREE</span>
+      </div>
+      <p class="psub" style="color:#fff">GDG LTCE · ORIENTATION</p>
+      <div>
+        <div class="pdate">7 OCT</div>
+        <p class="psub" style="color:var(--yellow)">2:00–4:30 PM · A510</p>
+      </div>
+      <div class="p-spk">
+        <div class="p-av">SW</div>
+        <div><b>Shankar Warang</b><small>OPEN SOURCE · LIVE &amp; UNFILTERED</small></div>
+      </div>
+      <ul class="p-agenda">
+        <li style="--c:var(--blue)"><i></i><span>2:00</span>Check-in + sticker pack</li>
+        <li style="--c:var(--red)"><i></i><span>2:15</span>Founder talk + Q&amp;A</li>
+        <li style="--c:var(--yellow)"><i></i><span>3:15</span>GSoC / C4GT picks</li>
+        <li style="--c:var(--green)"><i></i><span>3:45</span>Swag drop + DevCoin</li>
+      </ul>
+      <div class="p-perf"></div>
+      <div class="p-stub">
+        <div class="p-barcode"></div>
+        <p class="psub" style="text-align:center;color:rgba(255,255,255,.75)">SCREENSHOT → STORY → TAG @GDG.LTCE</p>
       </div>
       <span class="pstick">FREE SWAGS</span>
     </div>
@@ -706,18 +1039,19 @@ One afternoon. Zero fee. Say yes.
 <!-- CTA -->
 <section class="cta gridbg" id="ctaSection">
   <div class="wrap">
-    <p class="lab rev" style="--c:var(--royal)"><i></i>09 / One small ask</p>
-    <h2 class="rev" style="--d:.06s">Not your semester.<br>Just <span class="hl-w" style="background:linear-gradient(transparent 58%,#fff 58%,#fff 94%,transparent 94%)">Monday, 2:00 PM.</span></h2>
+    <p class="lab rev" style="--c:var(--royal)"><i></i>08 / One small ask</p>
+    <h2 class="rev" style="--d:.06s">Not your semester.<br>Just <span class="hl-w" style="background:linear-gradient(transparent 58%,#fff 58%,#fff 94%,transparent 94%)">Tuesday, 2:00 PM.</span></h2>
     <ul class="ask">
       <li class="rev" style="--d:.1s"><i style="background:var(--blue)"></i><span><b>The whole commitment:</b> walk into A510 at 2:00. The rest is fun, not effort.</span></li>
       <li class="rev" style="--d:.16s"><i style="background:var(--red)"></i><span><b>Good news:</b> it's free. <b>Better news:</b> tees. <b>Best news:</b> you're already invited.</span></li>
       <li class="rev" style="--d:.22s"><i style="background:var(--green)"></i><span>You're not "a student who attends events." You're <b>a builder who hasn't started yet</b>. Builders collect rooms like this one.</span></li>
-      <li class="rev" style="--d:.28s"><i style="background:var(--royal)"></i><span>You already did the hard part — showing up to college on a Monday. We'll handle the rest.</span></li>
+      <li class="rev" style="--d:.28s"><i style="background:var(--royal)"></i><span>You already did the hard part — showing up to college on a Tuesday. We'll handle the rest.</span></li>
     </ul>
     <p class="prize rev" style="--d:.32s">We're glad we could find a window in our schedule for you — one seat, holding your name till 2:05 PM. →</p>
     <div class="hero-cta rev" style="--d:.36s">
       <span class="bob"><a class="btn btn-lg btn-royal btn-claim" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce" target="_blank" rel="noopener">Claim my seat (7 sec)</a></span>
-      <a class="btn btn-lg btn-ink" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GDG%20Orientation%20%F0%9F%8E%92&dates=20251006T140000/20251006T163000&ctz=Asia/Kolkata&location=A510%20Auditorium%2C%20LTCE&details=Founder%20talk%20%2B%20mentorship%20picks%20%2B%20free%20swag%20drop.%20Bring%20nothing%2C%20leave%20loaded.">＋ Add to calendar</a>
+      <a class="btn btn-lg btn-ink" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GDG%20Orientation%20%F0%9F%8E%92&dates=20251007T140000/20251007T163000&ctz=Asia/Kolkata&location=A510%20Auditorium%2C%20LTCE&details=Founder%20talk%20%2B%20mentorship%20picks%20%2B%20free%20swag%20drop.%20Bring%20nothing%2C%20leave%20loaded.">＋ Add to calendar</a>
+      <a class="btn btn-lg btn-mlh" target="_blank" rel="noopener" href="https://events.mlh.com/events/14855-hacktoberfest-meetup-navi-mumbai-x-ltce">Register on MLH</a>
     </div>
     <p class="fine rev" style="--d:.4s">no fee · no long form · no regret (we checked)</p>
   </div>
@@ -733,14 +1067,14 @@ One afternoon. Zero fee. Say yes.
     </div>
     <div>
       <h4>Skim again</h4>
-      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#devcon">DevCon</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Insta card</a>
+      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Insta card</a>
     </div>
     <div>
       <h4>Say hi</h4>
       <a href="#">Instagram · @gdg.ltce</a><a href="#">WhatsApp group</a><a href="#">GitHub / DevCoin</a><a href="#">Mail the core team</a>
     </div>
   </div>
-  <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you monday, 2:00 sharp →</span></div>
+  <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you tuesday, 2:00 sharp →</span></div>
 </footer>
 
 <!-- FLOATING REGISTER BUTTON — always on screen, bounces to draw the eye -->
@@ -753,12 +1087,24 @@ One afternoon. Zero fee. Say yes.
 <!-- Toast notification -->
 <div id="toast" role="status"></div>
 
+<!-- Copy button label swap (from file 2) -->
+<script>
+(function(){
+  const b = document.getElementById('copyCap'); if(!b) return;
+  const label = b.textContent;
+  b.addEventListener('click', () => {
+    b.textContent = 'Copied ✓'; b.classList.add('done');
+    setTimeout(() => { b.textContent = label; b.classList.remove('done'); }, 2200);
+  });
+})();
+</script>
+
 <script>
 /* ==========================================================================
    CONFIG — change the event date here (drives countdown, LIVE and wrapped states)
    ========================================================================== */
-const EVENT_START = new Date('2025-10-06T14:00:00+05:30');
-const EVENT_END   = new Date('2025-10-06T16:30:00+05:30');
+const EVENT_START = new Date('2025-10-07T14:00:00+05:30');
+const EVENT_END   = new Date('2025-10-07T16:30:00+05:30');
 const TOTAL_SEATS = 150, CLAIMED_SEATS = 132;
 
 const hasGSAP = typeof gsap !== 'undefined';
@@ -850,8 +1196,8 @@ function setSeats(n) {
    ========================================================================== */
 (function heroIntro() {
   const title = document.getElementById('megaText');
-  title.innerHTML = [...title.textContent].map(c => `<span class="ch">${c}</span>`).join('');
-
+title.innerHTML = [...title.textContent].map((c, i) =>
+  `${i === 6 ? '<span class="brk"></span>' : ''}<span class="ch">${c}</span>`).join('');
   const $ = id => document.getElementById(id);
   const hlBar = $('heroHlBar'), megaWrap = $('megaWrap'), megaSvg = $('megaSvg'), heroArt = $('heroArt');
   const waves = document.querySelectorAll('#soundWaves .sw');
@@ -938,11 +1284,7 @@ function setSeats(n) {
   });
 
   // ---- scroll parallax (single set of triggers) ----
-  if (hasST) {
-    const base = { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 1 };
-    gsap.to('#heroGhost', { y: 90, ease: 'none', scrollTrigger: base });
-    gsap.to(heroArt, { y: -50, ease: 'none', scrollTrigger: base });
-  }
+ 
 })();
 
 /* ==========================================================================
@@ -997,26 +1339,6 @@ function setSeats(n) {
       if (handTag) tl.to(handTag, { opacity: 1, rotation: -2, y: 0, duration: .35, ease: 'power2.out' }, .8);
     });
   });
-})();
-
-/* ==========================================================================
-   6. DEVCON SHUTTER REVEAL
-   ========================================================================== */
-(function shutter() {
-  const frame = document.getElementById('shutterFrame');
-  const wrap = document.getElementById('shutterBlindWrap');
-  if (!frame || !wrap) return;
-  for (let i = 0; i < 24; i++) {
-    const b = document.createElement('div');
-    b.className = 'shutter-blind';
-    b.style.top = `${i * 4.18}%`;
-    b.style.transitionDelay = `${i * 0.025}s`;
-    wrap.appendChild(b);
-  }
-  const obs = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { wrap.classList.add('shutter-open'); obs.disconnect(); }
-  }), { threshold: .15 });
-  obs.observe(frame);
 })();
 
 /* ==========================================================================
@@ -1135,7 +1457,7 @@ if (hasST) {
     }
     if (now >= EVENT_END) {
       boxes.forEach(b => b.style.display = 'none');
-      live.textContent = " LIVE NOW — run to A510!";
+      live.textContent = "🔴 LIVE NOW — run to A510!";
       live.style.background = 'var(--green)';
       live.style.display = 'block';
       return;
@@ -1184,6 +1506,34 @@ if (copyBtn) copyBtn.addEventListener('click', async () => {
 });
 
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* AMBIENT CONFETTI — keeps the hero alive after the intro */
+(function ambientConfetti() {
+  const cv = document.getElementById('heroConfetti');
+  const hero = document.getElementById('top');
+  if (!cv || typeof confetti === 'undefined' || reduced) return;
+  const fire = confetti.create(cv, { resize: true, useWorker: false });
+  const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853'];
+  let visible = true;
+  new IntersectionObserver(es => visible = es[0].isIntersecting).observe(hero);
+
+  // gentle confetti rain from the top
+  function drizzle() {
+    if (!visible || document.hidden) return;
+    fire({ particleCount: 3, angle: 270, spread: 70, startVelocity: 9, gravity: .35,
+      drift: Math.random() * 1.2 - .6, ticks: 500, scalar: .95, colors,
+      origin: { x: Math.random(), y: -0.05 } });
+  }
+  // periodic pop from the megaphone
+  function burst() {
+    if (!visible || document.hidden) return;
+    const h = hero.getBoundingClientRect(), r = document.getElementById('heroArt').getBoundingClientRect();
+    fire({ particleCount: innerWidth < 700 ? 30 : 55, spread: 70, startVelocity: 32, gravity: .9, ticks: 180, colors,
+      origin: { x: (r.left + r.width * .7 - h.left) / h.width, y: (r.top + r.height * .4 - h.top) / h.height } });
+  }
+  setTimeout(() => { setInterval(drizzle, 450); }, 2600);
+  setTimeout(() => { setInterval(burst, 7000); }, 6000);
+})();
 </script>
 </body>
 </html>
