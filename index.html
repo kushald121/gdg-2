@@ -162,30 +162,47 @@ h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:rela
 /* ============ PERKS BENTO ============ */
 .perks{padding:5rem 0}
 .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1.3rem}
-.card{border:2px solid var(--ink);background:#fff;padding:1.6rem;position:relative;transition:transform .25s,box-shadow .25s;box-shadow:5px 5px 0 var(--ink)}
-.card:hover{transform:translate(-3px,-3px) rotate(0deg)!important;box-shadow:9px 9px 0 var(--ink)}
+.card{border:2px solid var(--ink);background:#fff;padding:1.6rem;position:relative;transition:transform .2s ease,box-shadow .2s ease;box-shadow:5px 5px 0 var(--ink)}
+.card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--ink)}
 .card h3{font-size:clamp(1.3rem,2.6vw,1.8rem);margin-bottom:.6rem}
 .card p{font-weight:500;font-size:.98rem}
-.card .ico{position:absolute;top:1.1rem;right:1.1rem;transform:rotate(8deg)}
+.card .ico{position:absolute;top:1.1rem;right:1.1rem}
 .card .stat{display:inline-block;margin-top:.9rem;font-family:'Archivo Black';font-size:.8rem;border:2px solid var(--ink);padding:.25rem .7rem;background:var(--yellow)}
-.c-a{grid-column:span 4;background:var(--blue);color:#fff;transform:rotate(-1deg)}
+.c-a{grid-column:span 4;background:var(--blue);color:#fff}
 .c-a .stat{background:#fff;color:var(--ink)}
-.c-b{grid-column:span 2;background:var(--red);color:#fff;transform:rotate(1.4deg)}
-.c-c{grid-column:span 2;background:var(--yellow);transform:rotate(-1.2deg)}
-.c-d{grid-column:span 4;background:var(--green);color:#fff;transform:rotate(.8deg)}
+.c-b{grid-column:span 2;background:var(--red);color:#fff}
+.c-c{grid-column:span 2;background:var(--yellow)}
+.c-d{grid-column:span 4;background:var(--green);color:#fff}
 @media(max-width:820px){.bento .card{grid-column:span 6!important}}
 
 /* ============ FUTURE (NEO-BRUTALISM) ============ */
-.future{padding:5rem 0;background:var(--paper);position:relative}
-.eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;position:relative}
+.future{padding:5.5rem 0;background:var(--paper);position:relative;opacity:1!important;visibility:visible!important}
+.eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;position:relative;align-items:stretch}
 @media(max-width:820px){.eps{grid-template-columns:1fr}}
-.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--er));transition:transform .25s,box-shadow .25s;position:sticky;top:8rem}
-.ep:hover{transform:rotate(0) translateY(-6px);box-shadow:12px 12px 0 var(--ec)}
-.ep .bar{height:14px;background:var(--ec);border-bottom:3px solid var(--ink)}
-.ep .in{padding:1.4rem}
-.ep .no{font-family:'Caveat';font-size:1.4rem;color:var(--ec);font-weight:700}
-.ep h3{font-size:1.4rem;margin:.3rem 0 .6rem}
-.ep p{font-weight:500;font-size:.95rem}
+.ep{border:3px solid var(--ink);background:#fff;border-radius:6px;box-shadow:7px 7px 0 var(--ec);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;justify-content:space-between;height:100%;opacity:1!important;visibility:visible!important;transform:none;position:relative}
+.ep:hover{transform:translate(-3px,-3px)!important;box-shadow:11px 11px 0 var(--ec)!important}
+.ep:active{transform:translate(2px,2px)!important;box-shadow:4px 4px 0 var(--ec)!important}
+.ep .bar{height:16px;background:var(--ec);border-bottom:3px solid var(--ink);width:100%;border-radius:3px 3px 0 0}
+.ep-corner-badge{position:absolute;top:-13px;right:14px;font-family:'Space Grotesk',system-ui,sans-serif;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:3.5px 10px;border:2.5px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);z-index:10;white-space:nowrap;line-height:1.2;display:inline-flex;align-items:center;gap:5px;transition:transform .15s ease,box-shadow .15s ease;transform:rotate(1.5deg)}
+.ep:hover .ep-corner-badge{transform:rotate(0deg) scale(1.05);box-shadow:4px 4px 0 var(--ink)}
+.ep-corner-badge.badge-featured{background:var(--yellow);color:var(--ink);transform:rotate(-1.8deg);border-width:2.5px}
+.ep-corner-badge.badge-featured i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 1.5px var(--ink)}
+.ep-insta-link{color:var(--ink);text-decoration:none;transition:color .15s ease,transform .15s ease}
+.ep-insta-link:hover{color:var(--blue);text-decoration:underline}
+.ep .in{padding:1.6rem;display:flex;flex-direction:column;justify-content:space-between;flex:1}
+.ep-top{margin-bottom:1.2rem}
+.ep-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.8rem;flex-wrap:wrap}
+.ep .no{font-family:'Caveat',cursive;font-size:1.45rem;color:var(--ink);font-weight:700;line-height:1}
+.ep-tag{font-family:'Space Grotesk',system-ui,sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .65rem;border:2px solid var(--ink);border-radius:999px;background:var(--ec);color:var(--ink);box-shadow:2px 2px 0 var(--ink);white-space:nowrap;flex-shrink:0}
+.ep-featured-tag{background:var(--yellow);box-shadow:2.5px 2.5px 0 var(--ink)}
+.ep h3{font-size:1.55rem;margin:.2rem 0 .7rem;letter-spacing:-.01em;line-height:1.08}
+.ep p{font-weight:500;font-size:.95rem;line-height:1.52;color:var(--ink)}
+.ep-meta{margin-top:1.4rem;padding-top:.85rem;border-top:2px dashed rgba(16,20,51,.2);display:flex;align-items:center;justify-content:space-between;gap:.6rem;font-size:.82rem;font-weight:700;color:var(--ink);flex-wrap:wrap}
+.ep-meta-left{display:inline-flex;align-items:center;gap:.35rem;color:var(--ink);white-space:nowrap}
+.ep-pill-link{display:inline-flex;align-items:center;gap:.3rem;color:var(--ink);white-space:nowrap;flex-shrink:0;font-size:.8rem;font-weight:700}
+.ep-badge-free{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;background:var(--yellow);color:var(--ink);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.78rem;padding:3px 8px;border:1.5px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);line-height:1.2}
+.ep.ep-featured{border-width:3.5px;box-shadow:9px 9px 0 var(--ec)}
+.ep.ep-featured:hover{box-shadow:13px 13px 0 var(--ec)!important}
 
 /* ============ THE PLAN TIMELINE SECTION ============ */
 .plan{background:var(--navy);--g:var(--grid-d);color:#fff;padding:5.5rem 0;position:relative;overflow:hidden;overflow-x:clip}
@@ -294,7 +311,7 @@ footer a:hover{color:var(--yellow)}
 <!-- NAV -->
 <nav>
   <div class="nav-in">
-    <a class="logo" href="#top"><span class="sq"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></span>GDG&nbsp;LTCE</a>
+    <a class="logo" href="#top"><span class="sq"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></span>GDG&nbsp;LTCOE</a>
     <div class="nav-links">
       <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Story</a>
     </div>
@@ -310,7 +327,7 @@ footer a:hover{color:var(--yellow)}
   <svg class="cf" style="top:20%;right:8%;width:40px;animation-delay:.6s" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--blue)" stroke-width="5"/></svg>
   <div class="wrap hero-grid" id="heroGrid">
     <div>
-      <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
+      <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCOE presents · <b>Orientation Day</b></p>
       <h1 class="mega" id="heroMega">
         <span class="hero-word" id="wordOrien">ORIEN-</span><br>
         <span class="hero-word" id="wordTation">TATION</span>
@@ -416,22 +433,22 @@ footer a:hover{color:var(--yellow)}
       <p class="hand rev" style="--d:.12s">skim now, thank yourself tuesday ↷</p>
     </div>
     <div class="bento">
-      <article class="card c-a rev" style="--r:-1deg">
+      <article class="card c-a rev" style="--r:0deg">
         <svg class="ico" width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="3"><circle cx="24" cy="24" r="18" fill="var(--yellow)"/><path d="M24 14v10l7 4"/></svg>
         <h3>Get mentored → GSoC &amp; C4GT</h3>
         <p>Selected students get hand-held open-source mentorship from the GDG core. Your first PR = our party day.</p>
         <span class="stat">3 GSoC finalists mentored last year</span>
       </article>
-      <article class="card c-b rev" style="--r:1.4deg;--d:.08s">
+      <article class="card c-b rev" style="--r:0deg;--d:.08s">
         <h3>Meet the founder</h3>
         <p>10 open minutes of Q&amp;A. No filters, no slides.</p>
       </article>
-      <article class="card c-c rev" style="--r:-1.2deg;--d:.14s">
+      <article class="card c-c rev" style="--r:0deg;--d:.14s">
         <svg class="ico" width="40" height="40" viewBox="0 0 48 48"><path d="M24 4l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)" stroke="var(--ink)" stroke-width="3"/></svg>
         <h3>Swag drop</h3>
         <p>Badges, stickers, MLH tees, DevCoin. Walk in empty-handed, walk out loaded.</p>
       </article>
-      <article class="card c-d rev" style="--r:.8deg;--d:.2s">
+      <article class="card c-d rev" style="--r:0deg;--d:.2s">
         <h3>Your future crew</h3>
         <p>50+ builders from every year in one room. The teammate for your next hackathon is sitting two seats away.</p>
         <span class="stat">every year · every branch</span>
@@ -562,33 +579,33 @@ footer a:hover{color:var(--yellow)}
       <div class="loot-scroll-area">
         <div class="loot-track" id="lootTrack">
 
-          <div class="loot-card" style="--lr:-2deg;--lc:var(--blue)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--blue)">
             <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><rect x="82" y="86" width="10" height="10" fill="var(--blue)"/><rect x="94" y="86" width="10" height="10" fill="var(--red)"/><rect x="106" y="86" width="10" height="10" fill="var(--yellow)"/><text x="100" y="126" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">MLH</text></svg>
             <b>MLH Tee</b><small>black. heavy. flexy.</small>
           </div>
 
-          <div class="loot-card" style="--lr:1.5deg;--lc:var(--red)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--red)">
             <svg viewBox="0 0 200 200"><path d="M70 12 L60 62 M130 12 L140 62" stroke="var(--ink)" stroke-width="6"/><rect x="48" y="56" width="104" height="120" rx="12" fill="#fff" stroke="var(--ink)" stroke-width="6"/><rect x="86" y="70" width="28" height="9" rx="4.5" fill="var(--ink)"/><circle cx="100" cy="112" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M72 152h56" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/></svg>
             <b>GDG Badge</b><small>lanyard included</small>
           </div>
 
-          <div class="loot-card" style="--lr:-1deg;--lc:var(--yellow)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--yellow)">
             <svg viewBox="0 0 200 200"><rect x="28" y="24" width="144" height="152" rx="10" fill="#fff" stroke="var(--ink)" stroke-width="6"/><circle cx="68" cy="66" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M132 44l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><circle cx="70" cy="132" r="17" fill="var(--green)" stroke="var(--ink)" stroke-width="5"/><path d="M120 122h28M120 142h28" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/></svg>
             <b>Sticker Pack</b><small>laptop fuel</small>
           </div>
 
-          <div class="loot-card" style="--lr:2deg;--lc:var(--green)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--green)">
             <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="var(--ink)" stroke-width="6"/><circle cx="100" cy="100" r="52" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="8 8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="var(--ink)">&lt;/&gt;</text></svg>
             <b>DevCoin</b><small>mint it live</small>
           </div>
 
-          <div class="loot-card" style="--lr:-1.6deg;--lc:var(--royal)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--royal)">
             <svg viewBox="0 0 200 200"><path d="M24 52 H176 V84 A16 16 0 0 0 176 116 V148 H24 V116 A16 16 0 0 0 24 84 Z" fill="var(--green)" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M136 52 V148" stroke="var(--ink)" stroke-width="4" stroke-dasharray="7 7"/><text x="80" y="110" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">PASS</text></svg>
             <b>Rewards Pass</b><small>faculty mentors too</small>
           </div>
 
           <!-- Bonus end card: ₹0 burst -->
-          <div class="loot-card" style="--lr:1deg;--lc:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow)">
+          <div class="loot-card" style="--lr:0deg;--lc:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow)">
             <svg class="burst" viewBox="0 0 200 200" aria-hidden="true" style="width:110px;height:110px;animation:spin 14s linear infinite"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
             <b style="font-size:1.1rem;margin-top:.5rem">Everything above.</b>
             <small style="opacity:1;font-size:.85rem">Free. Just show up.</small>
@@ -631,17 +648,75 @@ footer a:hover{color:var(--yellow)}
 </section>
 
 <!-- FUTURE (NEO-BRUTALISM) -->
-<section class="future gridbg">
+<section class="future gridbg" id="future">
   <div class="wrap">
     <div class="sec-head">
-      <div><p class="lab rev" style="--c:var(--red)"><i></i>07 / After-credits</p>
-      <h2 class="rev" style="--d:.06s">Tuesday is <span class="hl">episode 1</span></h2></div>
-      <p class="hand rev" style="--d:.12s">say yes to tuesday. decide the rest after. (spoiler: everyone says yes)</p>
+      <div>
+        <p class="lab" style="--c:var(--red)"><i></i>07 / After-credits</p>
+        <h2>Tuesday is <span class="hl">episode 1</span></h2>
+      </div>
+      <p class="hand">say yes to tuesday. decide the rest after. (spoiler: everyone says yes)</p>
     </div>
     <div class="eps">
-      <article class="ep rev" style="--ec:var(--blue);--er:-1.4deg"><div class="bar"></div><div class="in"><span class="no">ep. 02 →</span><h3>New Tech Updates</h3><p>Monthly drop of what actually changed in tech. No newsletter spam, just the good bits.</p></div></article>
-      <article class="ep rev" style="--ec:var(--yellow);--er:1.2deg;--d:.08s"><div class="bar"></div><div class="in"><span class="no">every sunday →</span><h3>Sunday Tech Bits</h3><p>Snack-size builds &amp; tools to try with your chai. Ten minutes, once a week.</p></div></article>
-      <article class="ep rev" style="--ec:var(--green);--er:-1deg;--d:.16s"><div class="bar"></div><div class="in"><span class="no">7 &amp; 8 oct →</span><h3>Hands-on Workshops</h3><p>Laptops open, mentors roaming, first commit shipped before you leave.</p></div></article>
+      <!-- Episode Card 1 -->
+      <article class="ep" style="--ec:var(--blue)">
+        <span class="ep-corner-badge" style="background:#e0edff;color:#1d4ed8">✦ MONTHLY RADAR</span>
+        <div class="bar"></div>
+        <div class="in">
+          <div class="ep-top">
+            <div class="ep-head">
+              <span class="no">ep. 02 →</span>
+              <span class="ep-tag">Tech Pulse</span>
+            </div>
+            <h3>New Tech Updates</h3>
+            <p>What actually shifted in the ecosystem this month. Zero newsletter spam, only the breakthroughs worth your radar.</p>
+          </div>
+          <div class="ep-meta">
+            <span class="ep-meta-left">✦ 5-min read</span>
+            <span class="ep-pill-link">First drop soon ↗</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Episode Card 2 (Tuesday Tarka - Dev Logic) -->
+      <article class="ep ep-featured" style="--ec:var(--yellow)">
+        <span class="ep-corner-badge badge-featured"><i></i>★ WEEKLY TARKA</span>
+        <div class="bar"></div>
+        <div class="in">
+          <div class="ep-top">
+            <div class="ep-head">
+              <span class="no">every tuesday →</span>
+              <span class="ep-tag ep-featured-tag">Dev Logic</span>
+            </div>
+            <h3>TUESDAY TARKA</h3>
+            <p>Like New Tech Updates, but deeper — unpacking the logic, architecture &amp; tools behind the tech. Dropping on the GDG LTCOE Instagram page (@gdg_ltcoe). 100% free (unless you want to pay for future posts).</p>
+          </div>
+          <div class="ep-meta">
+            <a href="https://instagram.com/gdg_ltcoe" target="_blank" rel="noopener noreferrer" class="ep-meta-left ep-insta-link">✦ Instagram @gdg_ltcoe ↗</a>
+            <span class="ep-badge-free">100% Free&nbsp;✓</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Episode Card 3 -->
+      <article class="ep" style="--ec:var(--green)">
+        <span class="ep-corner-badge" style="background:#dcfce7;color:#15803d">⚡ LIVE WORKSHOP</span>
+        <div class="bar"></div>
+        <div class="in">
+          <div class="ep-top">
+            <div class="ep-head">
+              <span class="no">7 &amp; 8 oct →</span>
+              <span class="ep-tag">Live Build</span>
+            </div>
+            <h3>Hands-on Workshops</h3>
+            <p>Laptops unlatched, core team roaming the room. Ship your very first open-source commit before you walk out.</p>
+          </div>
+          <div class="ep-meta">
+            <span class="ep-meta-left">✦ In-person hall</span>
+            <span class="ep-pill-link">Bring machine ↗</span>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -659,7 +734,7 @@ Founder talk (open source, zero→PR)
 GSoC & C4GT mentorship picks
 MLH tees · stickers · DevCoin — all FREE
 One afternoon. Zero fee. Say yes.
-#GDGLTCE #Orientation #OpenSource</div>
+#GDGLTCOE #Orientation #OpenSource</div>
       <button class="btn btn-white rev" style="--d:.24s" id="copyCap">Copy LinkedIn caption</button>
       <div class="mentorship-cta rev" style="--d:.3s;margin-top:1.5rem;padding:1.2rem;background:linear-gradient(135deg, var(--blue) 0%, var(--royal) 100%);border:2px solid #fff;border-radius:8px;box-shadow:6px 6px 0 rgba(0,0,0,0.3)">
         <p style="font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:.5rem">Want to get mentored?</p>
@@ -670,7 +745,7 @@ One afternoon. Zero fee. Say yes.
     <div class="phone gridbg rev" id="instaPhone" style="--r:3deg;--d:.1s">
       <div>
         <div class="dots"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
-        <p class="psub" style="margin-top:14px;color:#fff">GDG LTCE · ORIENTATION</p>
+        <p class="psub" style="margin-top:14px;color:#fff">GDG LTCOE · ORIENTATION</p>
       </div>
       <div>
         <div class="pdate">6 OCT</div>
@@ -684,7 +759,7 @@ One afternoon. Zero fee. Say yes.
           <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="#fff" stroke-width="8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="44" fill="var(--ink)">&lt;/&gt;</text></svg>
           <svg viewBox="0 0 200 200"><path d="M100 8l10 26 26 10-26 10-10 26-10-26-26-10 26-10z" fill="var(--red)" stroke="#fff" stroke-width="8" transform="scale(1.6) translate(-38 -18)"/></svg>
         </div>
-        <p class="psub" style="text-align:center;margin-top:10px;color:rgba(255,255,255,.7)">SCREENSHOT → STORY → TAG @GDG.LTCE</p>
+        <p class="psub" style="text-align:center;margin-top:10px;color:rgba(255,255,255,.7)">SCREENSHOT → STORY → TAG @GDG_LTCOE</p>
       </div>
       <span class="pstick">FREE SWAGS</span>
     </div>
@@ -717,7 +792,7 @@ One afternoon. Zero fee. Say yes.
   <div class="fbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
   <div class="wrap f-grid">
     <div>
-      <h4>GDG LTCE</h4>
+      <h4>GDG LTCOE</h4>
       <p style="font-weight:500;max-width:34ch">Google Developer Groups · Lokmanya Tilak College of Engineering, University of Mumbai. We learn, build &amp; connect — loudly, and with stickers.</p>
     </div>
     <div>
@@ -726,10 +801,10 @@ One afternoon. Zero fee. Say yes.
     </div>
     <div>
       <h4>Say hi</h4>
-      <a href="#">Instagram · @gdg.ltce</a><a href="#">WhatsApp group</a><a href="#">GitHub / DevCoin</a><a href="#">Mail the core team</a>
+      <a href="https://instagram.com/gdg_ltcoe" target="_blank" rel="noopener">Instagram · @gdg_ltcoe</a><a href="#">WhatsApp group</a><a href="#">GitHub / DevCoin</a><a href="#">Mail the core team</a>
     </div>
   </div>
-  <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you tuesday, 2:00 sharp →</span></div>
+  <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCOE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you tuesday, 2:00 sharp →</span></div>
 </footer>
 
 <!-- Toast notification -->
@@ -1370,32 +1445,10 @@ window.addEventListener('scroll', () => {
 })();
 
 /* ==========================================================================
-   12. STACKED CARDS FOR FUTURE EPISODES
+   12. FUTURE EPISODES SECTION
    ========================================================================== */
 (function setupStackedCards(){
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-
-  const futureSection = document.querySelector('.future');
-  const cards = document.querySelectorAll('.ep');
-  if (!futureSection || !cards.length) return;
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-
-  cards.forEach((card, index) => {
-    // Each card scales down and dims as it gets stacked behind
-    gsap.to(card, {
-      scale: 1 - (index * 0.05),
-      opacity: 1 - (index * 0.15),
-      scrollTrigger: {
-        trigger: card,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: true
-      }
-    });
-  });
+  // All episode cards render with 100% immediate visibility and clean rectangle geometry
 })();
 
 /* ==========================================================================
