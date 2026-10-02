@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDG Orientation · Mon 6 Oct · A510 — Free Swags, Founder Talk, Mentorship</title>
+<meta name="description" content="One afternoon. Zero fee. Founder talk on Open Source, GSoC & C4GT mentorship picks, MLH tees, DevCoin & sticker packs. Mon 6 Oct, 2:00 PM, A510 Auditorium, LTCE.">
+<meta property="og:title" content="GDG Orientation — 6 Oct, A510">
+<meta property="og:description" content="Free MLH tees · DevCoin · Stickers · Founder talk · GSoC mentorship. One seat is holding your name.">
+<meta property="og:image" content="images/image.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='13' height='13' fill='%234285F4'/><rect x='17' y='2' width='13' height='13' fill='%23EA4335'/><rect x='2' y='17' width='13' height='13' fill='%23FBBC05'/><rect x='17' y='17' width='13' height='13' fill='%2334A853'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- GSAP + ScrollTrigger + Canvas Confetti CDNs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<style>
+/* ============ GDG PALETTE & BASE ============ */
+:root{
+  --blue:#4285F4; --red:#EA4335; --yellow:#FBBC05; --green:#34A853;
+  --royal:#2A3EB1; --navy:#0E1633; --ink:#101433; --paper:#FAF7EF;
+  --grid-l:rgba(16,20,51,.08); --grid-d:rgba(255,255,255,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.5}
+::selection{background:var(--yellow);color:var(--ink)}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3,.disp{font-family:'Archivo Black',sans-serif;letter-spacing:-.02em;line-height:.95;text-transform:uppercase}
+.hand{font-family:'Caveat',cursive;text-transform:none;letter-spacing:0}
+.wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+.gridbg{background-image:linear-gradient(var(--g,var(--grid-l)) 1px,transparent 1px),linear-gradient(90deg,var(--g,var(--grid-l)) 1px,transparent 1px);background-size:44px 44px}
+.os{box-shadow:6px 6px 0 var(--ink)}
+.os-y{box-shadow:9px 9px 0 var(--yellow)}
+.os-w{box-shadow:9px 9px 0 rgba(255,255,255,.92)}
+.hl{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 94%,transparent 94%);padding:0 .12em}
+.hl-w{background:linear-gradient(transparent 58%,rgba(255,255,255,.9) 58%,rgba(255,255,255,.9) 94%,transparent 94%);padding:0 .12em}
+
+/* Top Progress Bar */
+#scroll-progress{position:fixed;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg, #ea4335 0%, #4285f4 33%, #fbbc04 66%, #34a853 100%);transform-origin:left center;transform:scaleX(0);z-index:10000;pointer-events:none}
+
+/* Cat & Mouse Interactive Cursor */
+.actor{position:fixed;top:0;left:0;font-size:28px;pointer-events:none;z-index:9999;user-select:none;will-change:transform}
+#cat{transition:filter .3s}
+#cat.sleep{filter:grayscale(70%) opacity(0.6)}
+
+/* Reveal */
+.rev{opacity:0;transform:translateY(26px) rotate(var(--rr,0deg));transition:opacity .6s ease var(--d,0s),transform .6s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
+.rev.in{opacity:1;transform:translateY(0) rotate(var(--r,0deg))}
+
+/* Section label */
+.lab{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase}
+.lab i{width:12px;height:12px;background:var(--c,var(--red));display:inline-block;transform:rotate(45deg)}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.6rem}
+.sec-head h2{font-size:clamp(2rem,5.4vw,3.6rem)}
+.sec-head .hand{font-size:clamp(1.2rem,2.6vw,1.7rem);transform:rotate(-2deg)}
+
+/* Buttons & chips */
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.5rem;border:2px solid var(--ink);border-radius:999px;background:var(--yellow);color:var(--ink);font:700 1rem 'Space Grotesk';cursor:pointer;text-decoration:none;box-shadow:4px 4px 0 var(--ink);transition:transform .15s,box-shadow .15s,background .2s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn.done{background:var(--green);color:#fff}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-royal{background:var(--royal);color:#fff}
+.btn-white{background:#fff}
+.btn-sm{padding:.55rem 1rem;font-size:.85rem;box-shadow:3px 3px 0 var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--ink);background:#fff;border-radius:999px;padding:.5rem 1rem;font-weight:700;font-size:.92rem}
+.chip svg{flex:none}
+
+/* ============ NAV ============ */
+nav{position:sticky;top:0;z-index:90;background:var(--paper);border-bottom:2px solid var(--ink)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem 22px;max-width:1140px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:'Archivo Black';font-size:1.05rem;text-decoration:none}
+.logo .sq{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:22px;height:22px}
+.logo .sq i{border-radius:3px}
+.nav-links{display:flex;gap:1.6rem;font-weight:700;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase}
+.nav-links a{text-decoration:none;position:relative}
+.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:4px;background:var(--yellow);transition:right .25s}
+.nav-links a:hover::after{right:0}
+@media(max-width:820px){.nav-links{display:none}}
+
+/* ============ HERO (ORIENTATION AT START) ============ */
+header.hero{position:relative;padding:3.5rem 0 4.2rem;overflow:hidden}
+.ghost{position:absolute;top:4%;right:-3%;font-family:'Archivo Black';font-size:24vw;color:transparent;-webkit-text-stroke:2px rgba(16,20,51,.07);pointer-events:none;user-select:none;will-change:transform}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center;position:relative}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.kick{font-weight:700;letter-spacing:.24em;font-size:.78rem;text-transform:uppercase;display:flex;align-items:center;gap:.6rem}
+.kick b{color:var(--royal)}
+
+h1.mega{font-size:clamp(3.4rem,11.5vw,8.6rem);margin:.5rem 0 .3rem;position:relative;display:inline-block;line-height:0.88}
+.hero-word{display:inline-block;will-change:transform, opacity}
+.hl-bar{position:absolute;left:-2%;right:-3%;bottom:0.04em;height:0.18em;background:var(--yellow);transform:rotate(-1.2deg) scaleX(0);transform-origin:left center;z-index:-1;will-change:transform}
+
+.hero-sub{font-size:clamp(1.05rem,2.2vw,1.3rem);font-weight:500;max-width:34ch;margin:1rem 0 1.4rem}
+.hero-sub b{background:var(--ink);color:var(--yellow);padding:0 .3em}
+.chips{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.6rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
+.hand-note{font-size:1.5rem;transform:rotate(-3deg);color:var(--royal)}
+.hand-note svg{vertical-align:middle}
+
+/* countdown */
+.cd{display:flex;gap:.7rem;margin:1.8rem 0 1.2rem;flex-wrap:wrap}
+.cd .box{background:#fff;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.65rem .95rem .5rem;min-width:82px;text-align:center}
+.cd .box b{font-family:'Archivo Black';font-size:1.85rem;display:block;line-height:1}
+.cd .box span{font-size:.65rem;font-weight:700;letter-spacing:.2em}
+.cd-live{display:none;font-family:'Archivo Black';font-size:1.4rem;background:var(--red);color:#fff;border:2px solid var(--ink);padding:.8rem 1.2rem;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--ink);will-change:transform}
+
+/* seats */
+.seats{max-width:460px}
+.seats .row{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem;margin-bottom:.4rem}
+.seats .row b{font-family:'Archivo Black'}
+.track{height:20px;border:2px solid var(--ink);background:#fff;overflow:hidden}
+.fill{height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--blue) 0 14px,var(--red) 14px 28px,var(--yellow) 28px 42px,var(--green) 42px 56px);will-change:width}
+.seats small{display:block;margin-top:.4rem;font-weight:500;opacity:.75}
+
+/* hero art */
+.hero-art{position:relative;justify-self:center;width:min(420px,90%);perspective:900px;cursor:pointer}
+.mega-wrap{width:100%;transform-origin:35% 55%;will-change:transform}
+.hero-art .mega-svg{width:100%;filter:drop-shadow(8px 8px 0 rgba(16,20,51,.15));will-change:transform}
+.sw{transform-origin:120px 80px;will-change:transform, opacity}
+.sticker{position:absolute;border:2px solid var(--ink);border-radius:999px;padding:.5rem 1rem;font-family:'Archivo Black';font-size:.85rem;background:#fff;--sh:0px;box-shadow:var(--sh) var(--sh) 0 var(--ink);will-change:transform, box-shadow;transform-origin:center center}
+.st1{top:2%;left:-4%;background:var(--red);color:#fff}
+.st2{bottom:14%;right:-6%;background:var(--yellow)}
+.st3{bottom:-4%;left:8%;background:var(--green);color:#fff}
+.cf{position:absolute;pointer-events:none;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-14px) rotate(12deg)}}
+
+
+/* ============ TICKER ============ */
+.ticker{background:var(--yellow);border-block:2px solid var(--ink);overflow:hidden}
+.tk-track{display:flex;width:max-content;animation:tick 24s linear infinite}
+.tk-track:hover{animation-play-state:paused}
+.tk-g{display:flex;align-items:center;gap:2.4rem;padding:.75rem 1.2rem .75rem 2.4rem}
+.tk-g span{font-family:'Archivo Black';font-size:1rem;letter-spacing:.05em;white-space:nowrap}
+.tk-g i{font-style:normal;font-size:1.1rem}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ============ SPEAKER ============ */
+.speaker{background:var(--royal);--g:var(--grid-d);color:#fff;padding:5rem 0;position:relative;overflow:hidden}
+.sp-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:3.4rem;align-items:center}
+@media(max-width:900px){.sp-grid{grid-template-columns:1fr}}
+.polaroid{position:relative;background:#fff;border:2px solid var(--ink);padding:12px 12px 0;transform:rotate(-2.5deg);max-width:380px;margin:auto;box-shadow:8px 8px 0 rgba(0,0,0,0.4);transition:transform .3s ease-out}
+.polaroid:hover{transform:rotate(0deg) scale(1.03)}
+.polaroid .ph{aspect-ratio:4/5;overflow:hidden;background:var(--navy);position:relative;border:2px solid var(--ink)}
+.polaroid img{width:100%;height:100%;object-fit:cover;position:relative;z-index:2}
+.ph-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:5rem;color:var(--yellow);z-index:1}
+.tape{position:absolute;width:96px;height:26px;background:rgba(251,188,5,.9);border:1px solid rgba(16,20,51,.25);top:-13px;left:26px;transform:rotate(-7deg);z-index:3}
+.tape.t2{left:auto;right:26px;transform:rotate(6deg)}
+.polaroid .cap{font-family:'Caveat';font-size:1.5rem;color:var(--ink);text-align:center;padding:.5rem 0 .8rem}
+.sp-name{font-size:clamp(2.4rem,6.5vw,4.8rem);margin:.8rem 0 1rem}
+.sp-role{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.3rem}
+.sp-role .chip{background:transparent;color:#fff;border-color:rgba(255,255,255,.85);font-size:.85rem}
+.topic{display:inline-block;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);font-family:'Archivo Black';font-size:1.15rem;padding:.5rem 1.1rem;transform:rotate(-2deg);box-shadow:5px 5px 0 rgba(0,0,0,.35)}
+.sp-line{margin-top:1.4rem;font-size:1.12rem;max-width:38ch;font-weight:500}
+.brackets{position:absolute;font-family:'Archivo Black';color:rgba(255,255,255,.16);font-size:6rem;user-select:none}
+
+/* ============ PERKS BENTO ============ */
+.perks{padding:5rem 0}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1.3rem}
+.card{border:2px solid var(--ink);background:#fff;padding:1.6rem;position:relative;transition:transform .25s,box-shadow .25s;box-shadow:5px 5px 0 var(--ink)}
+.card:hover{transform:translate(-3px,-3px) rotate(0deg)!important;box-shadow:9px 9px 0 var(--ink)}
+.card h3{font-size:clamp(1.3rem,2.6vw,1.8rem);margin-bottom:.6rem}
+.card p{font-weight:500;font-size:.98rem}
+.card .ico{position:absolute;top:1.1rem;right:1.1rem;transform:rotate(8deg)}
+.card .stat{display:inline-block;margin-top:.9rem;font-family:'Archivo Black';font-size:.8rem;border:2px solid var(--ink);padding:.25rem .7rem;background:var(--yellow)}
+.c-a{grid-column:span 4;background:var(--blue);color:#fff;transform:rotate(-1deg)}
+.c-a .stat{background:#fff;color:var(--ink)}
+.c-b{grid-column:span 2;background:var(--red);color:#fff;transform:rotate(1.4deg)}
+.c-c{grid-column:span 2;background:var(--yellow);transform:rotate(-1.2deg)}
+.c-d{grid-column:span 4;background:var(--green);color:#fff;transform:rotate(.8deg)}
+@media(max-width:820px){.bento .card{grid-column:span 6!important}}
+
+/* ============ THE PLAN TIMELINE SECTION ============ */
+.plan{background:var(--navy);--g:var(--grid-d);color:#fff;padding:5.5rem 0;position:relative;overflow:hidden;overflow-x:clip}
+.plan-line{position:absolute;left:calc(120px + 17px);top:0;bottom:0;width:4px;background:linear-gradient(180deg, var(--blue), var(--red), var(--yellow), var(--green), var(--royal));border-radius:4px;box-shadow:0 0 12px rgba(66,133,244,0.6);transform-origin:top center;transform:scaleY(0);z-index:1}
+.plan .rows{list-style:none;max-width:920px;position:relative;z-index:2}
+.plan .timeline-row{display:grid;grid-template-columns:120px 34px 1fr;gap:1.2rem;padding:1.6rem 0;position:relative;align-items:center;will-change:transform, opacity}
+.plan .time-pill{display:inline-block;border:2.5px solid #fff;border-radius:10px;padding:6px 14px;font-family:'Archivo Black',sans-serif;font-size:1.25rem;box-shadow:4px 4px 0 rgba(0,0,0,0.5);text-align:center;will-change:transform;transform-origin:center center}
+.plan .dot-wrap{position:relative;display:flex;justify-content:center;align-items:center;height:42px}
+.plan .dot-ring{width:22px;height:22px;border-radius:50%;background:var(--tc);border:3.5px solid #fff;box-shadow:0 0 0 2.5px var(--tc);will-change:transform;transform-origin:center center}
+.plan .dot-pulse{position:absolute;width:22px;height:22px;border-radius:50%;border:2.5px solid var(--tc);pointer-events:none;opacity:0;will-change:transform, opacity}
+.plan .row-body b{font-size:1.2rem;font-weight:800;color:#fff;display:block}
+.plan .row-body small{font-size:0.98rem;font-weight:500;color:rgba(255,255,255,0.82)}
+.plan .hand-tag{display:inline-block;background:var(--yellow);color:#101433;border:2px solid #fff;border-radius:8px;padding:3px 12px;font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;box-shadow:4px 4px 0 rgba(0,0,0,0.6);margin-left:10px;margin-top:4px;will-change:transform, opacity}
+.plan .row-sep{position:absolute;left:0;right:0;bottom:0;height:2px;border-bottom:2.5px dashed rgba(255,255,255,0.22);transform-origin:left center;transform:scaleX(0);will-change:transform}
+
+@media(max-width:699px){
+  .plan .timeline-row{grid-template-columns:78px 24px 1fr;gap:0.8rem}
+  .plan-line{left:calc(78px + 12px)}
+  .plan .time-pill{font-size:1rem;padding:4px 8px}
+}
+
+/* ============ DEVCON STAGE SHOWCASE ============ */
+.devcon-showcase{background:#07060e;color:#fff;padding:5rem 0;border-block:2px solid var(--ink)}
+.devcon-window-frame{position:relative;width:min(940px, 92vw);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:4px solid #221c33;box-shadow:0 25px 80px rgba(0,0,0,0.8);margin:0 auto}
+.shutter-blind{position:absolute;left:0;right:0;height:4.2%;background:linear-gradient(180deg, #3d2212 0%, #1a0f07 60%, #3d2212 100%);border-bottom:1.5px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 3px 6px rgba(0,0,0,0.8);transform-origin:top center;transition:transform 1.4s cubic-bezier(0.77, 0, 0.175, 1);z-index:2}
+.shutter-open .shutter-blind{transform:scaleY(0.04) translateY(-900%)}
+
+/* ============ LOOT ============ */
+.loot{padding:5rem 0}
+.loot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
+@media(max-width:980px){.loot-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.loot-grid{grid-template-columns:repeat(2,1fr)}}
+.loot-card{border:2px solid var(--ink);background:#fff;padding:1.2rem .9rem 1rem;text-align:center;box-shadow:5px 5px 0 var(--ink);transition:transform .25s,box-shadow .25s;transform:rotate(var(--lr,0deg))}
+.loot-card:hover{transform:rotate(0) translateY(-8px);box-shadow:8px 10px 0 var(--lc,var(--ink))}
+.loot-card svg{width:82px;height:82px;margin:0 auto .6rem}
+.loot-card b{font-family:'Archivo Black';font-size:.95rem;display:block}
+.loot-card small{font-weight:600;opacity:.7;font-size:.78rem}
+.loot-note{margin-top:2.4rem;display:flex;flex-wrap:wrap;align-items:center;gap:1.4rem;justify-content:center}
+.burst{width:130px;height:130px;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loot-note .big{font-family:'Archivo Black';font-size:clamp(1.4rem,3.6vw,2.3rem)}
+
+/* ============ 3D DEVCON PASS SECTION (HORIZONTAL LAYOUT) ============ */
+.pass-section{position:relative;background:#0b0a16;color:#fff;padding:5.5rem 0;overflow:hidden}
+.pass-stage{position:relative;width:min(740px, 92vw);aspect-ratio:16/9.6;margin:3rem auto 2rem;perspective:1000px;transform-style:preserve-3d;cursor:grab}
+.pass-fan-card{position:absolute;inset:0;border-radius:20px;overflow:hidden;border:2.5px solid rgba(255,255,255,0.45);background:#070913;box-shadow:0 30px 80px rgba(0,0,0,0.85), 0 0 35px rgba(66,133,244,0.3);transform-origin:bottom center;transition:transform 0.15s ease-out}
+.pass-fan-card img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+
+
+/* ============ FUTURE (NEO-BRUTALISM) ============ */
+.future{padding:5rem 0;background:var(--paper)}
+.eps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+@media(max-width:820px){.eps{grid-template-columns:1fr}}
+.ep{border:3px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ec);transform:rotate(var(--er));transition:transform .25s,box-shadow .25s}
+.ep:hover{transform:rotate(0) translateY(-6px);box-shadow:12px 12px 0 var(--ec)}
+.ep .bar{height:14px;background:var(--ec);border-bottom:3px solid var(--ink)}
+.ep .in{padding:1.4rem}
+.ep .no{font-family:'Caveat';font-size:1.4rem;color:var(--ec);font-weight:700}
+.ep h3{font-size:1.4rem;margin:.3rem 0 .6rem}
+.ep p{font-weight:500;font-size:.95rem}
+
+/* ============ STORY / INSTA ============ */
+.story{background:var(--royal);--g:var(--grid-d);color:#fff;padding:5rem 0;overflow:hidden}
+.story-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
+@media(max-width:900px){.story-grid{grid-template-columns:1fr}}
+.story h2{font-size:clamp(2rem,5vw,3.4rem);margin:.8rem 0 1rem}
+.story p.lead{font-size:1.08rem;font-weight:500;max-width:40ch;margin-bottom:1.4rem}
+.cap-box{background:#fff;color:var(--ink);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--yellow);padding:1.1rem 1.2rem;font-size:.92rem;font-weight:500;white-space:pre-line;max-width:440px;margin-bottom:1.1rem}
+.phone{justify-self:center;width:min(330px,86%);aspect-ratio:9/16;border:3px solid var(--ink);border-radius:26px;background:var(--navy);--g:var(--grid-d);padding:20px 18px;display:flex;flex-direction:column;justify-content:space-between;transform:rotate(3deg);box-shadow:12px 12px 0 var(--yellow);position:relative;transition:transform .2s ease-out}
+.phone .dots{display:flex;gap:6px}
+.phone .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
+.phone .pdate{font-family:'Archivo Black';font-size:3.4rem;color:var(--yellow);line-height:1}
+.phone .psub{font-weight:700;letter-spacing:.14em;font-size:.8rem}
+.phone .pline{border-top:2px dashed rgba(255,255,255,.35);margin:.7rem 0}
+.phone .prow{display:flex;gap:.6rem;justify-content:center}
+.phone .prow svg{width:44px;height:44px}
+.phone .pstick{position:absolute;right:-16px;top:34%;background:var(--red);color:#fff;border:2px solid var(--ink);font-family:'Archivo Black';padding:.45rem .9rem;transform:rotate(8deg);box-shadow:3px 3px 0 var(--ink)}
+
+/* ============ CTA ============ */
+.cta{background:var(--yellow);--g:rgba(16,20,51,.10);padding:5rem 0;border-top:2px solid var(--ink)}
+.cta h2{font-size:clamp(2.4rem,7vw,5rem);margin:.7rem 0 1.6rem}
+.ask{list-style:none;max-width:640px;margin-bottom:1.8rem}
+.ask li{display:flex;gap:.9rem;align-items:start;font-weight:600;font-size:1.06rem;padding:.55rem 0}
+.ask li i{flex:none;width:16px;height:16px;margin-top:.3rem;border:2px solid var(--ink);transform:rotate(45deg)}
+.prize{font-family:'Caveat';font-size:clamp(1.4rem,3vw,1.9rem);transform:rotate(-1.5deg);margin-bottom:1.8rem;max-width:36ch}
+.fine{margin-top:1.4rem;font-weight:700;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+
+/* ============ FOOTER ============ */
+footer{background:var(--ink);color:rgba(255,255,255,.82);padding:3.4rem 0 2rem}
+.fbar{display:flex;height:10px}
+.fbar i{flex:1}
+.f-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2rem;margin-top:2.6rem}
+@media(max-width:760px){.f-grid{grid-template-columns:1fr}}
+footer h4{font-family:'Archivo Black';color:#fff;font-size:.95rem;letter-spacing:.14em;margin-bottom:.9rem}
+footer a{text-decoration:none;display:block;padding:.22rem 0;font-weight:500}
+footer a:hover{color:var(--yellow)}
+.f-bot{margin-top:2.6rem;border-top:1px dashed rgba(255,255,255,.25);padding-top:1.2rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;font-size:.82rem}
+
+/* Toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,140%);background:var(--ink);color:#fff;border:2.5px solid var(--yellow);padding:.9rem 1.4rem;font-weight:700;border-radius:999px;box-shadow:6px 6px 0 rgba(0,0,0,.4);transition:transform .45s cubic-bezier(.2,.8,.2,1);z-index:10001;max-width:90vw;text-align:center}
+#toast.show{transform:translate(-50%,0)}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rev{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Scroll Progress Bar -->
+<div id="scroll-progress"></div>
+
+<!-- Cat & Mouse Interactive Elements -->
+<div class="actor" id="mouse" aria-hidden="true">🐭</div>
+<div class="actor" id="cat" aria-hidden="true">🐱</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#top"><span class="sq"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></span>GDG&nbsp;LTCE</a>
+    <div class="nav-links">
+      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#devcon">DevCon</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Story</a>
+    </div>
+    <button class="btn btn-sm btn-claim">Claim seat</button>
+  </div>
+</nav>
+
+<!-- HERO (ORIENTATION AT START) -->
+<header class="hero gridbg" id="top">
+  <div class="ghost" id="heroGhost" aria-hidden="true">GDG</div>
+  <svg class="cf" style="top:12%;left:4%;width:34px" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)"/></svg>
+  <svg class="cf" style="top:64%;left:46%;width:26px;animation-delay:1.2s" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--green)"/></svg>
+  <svg class="cf" style="top:20%;right:8%;width:40px;animation-delay:.6s" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--blue)" stroke-width="5"/></svg>
+  <div class="wrap hero-grid" id="heroGrid">
+    <div>
+      <p class="kick" id="heroKick"><i style="width:10px;height:10px;background:var(--blue);display:inline-block;transform:rotate(45deg)"></i> GDG LTCE presents · <b>Orientation Day</b></p>
+      <h1 class="mega" id="heroMega">
+        <span class="hero-word" id="wordOrien">ORIEN-</span><br>
+        <span class="hero-word" id="wordTation">TATION</span>
+        <span class="hl-bar" id="heroHlBar"></span>
+      </h1>
+      <p class="hero-sub" id="heroSub">You want <b>skills that show</b>, <b>a crew that builds</b>, <b>swag that flexes</b>. We packed all three into one afternoon.</p>
+      <div class="chips" id="heroChips">
+        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mon · 6 Oct</span>
+        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>2:00 – 4:30 PM</span>
+        <span class="chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>A510 Auditorium</span>
+      </div>
+      <div class="hero-cta" id="heroCta">
+        <button class="btn btn-claim" id="heroClaimBtn">Claim my seat — 7 sec</button>
+        <a class="btn btn-white" href="#perks">Peek the perks ↓</a>
+      </div>
+      <p class="hand hand-note" id="heroHandNote">we saved a seat with your name on it
+        <svg width="52" height="26" viewBox="0 0 60 30" fill="none" stroke="var(--royal)" stroke-width="3" stroke-linecap="round"><path d="M2 8c14 16 34 18 50 8m0 0l-8-2m8 2l-3 8"/></svg></p>
+      <div class="cd" id="cd">
+        <div class="box"><b id="cd-d">--</b><span>DAYS</span></div>
+        <div class="box"><b id="cd-h">--</b><span>HRS</span></div>
+        <div class="box"><b id="cd-m">--</b><span>MIN</span></div>
+        <div class="box"><b id="cd-s">--</b><span>SEC</span></div>
+        <div class="cd-live" id="cd-live">🔴 LIVE NOW — run to A510!</div>
+      </div>
+      <div class="seats" id="heroSeats">
+        <div class="row"><span>Seats claimed</span><b><span id="seatNum">0</span> / 150</b></div>
+        <div class="track"><div class="fill" id="seatBar"></div></div>
+        <small>…by people from your own classes. Story proofs inside ↓</small>
+      </div>
+    </div>
+    <div class="hero-art" id="heroArt">
+      <div class="mega-wrap" id="megaWrap">
+        <svg class="mega-svg" id="megaSvg" viewBox="0 0 230 180" aria-hidden="true">
+          <!-- Sound waves emitted from megaphone mouth -->
+          <g id="soundWaves">
+            <path class="sw sw1" d="M142 56c8 6 8 44 0 52" fill="none" stroke="var(--blue)" stroke-width="4.5" stroke-linecap="round"/>
+            <path class="sw sw2" d="M162 42c14 12 14 68 0 80" fill="none" stroke="var(--yellow)" stroke-width="4.5" stroke-linecap="round"/>
+            <path class="sw sw3" d="M182 28c20 18 20 100 0 118" fill="none" stroke="var(--red)" stroke-width="4.5" stroke-linecap="round"/>
+          </g>
+          <!-- Megaphone -->
+          <path d="M28 78 L118 34 L118 128 L28 100 Z" fill="var(--red)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+          <ellipse cx="118" cy="81" rx="16" ry="47" fill="var(--yellow)" stroke="var(--ink)" stroke-width="5"/>
+          <rect x="42" y="98" width="22" height="52" rx="8" fill="var(--blue)" stroke="var(--ink)" stroke-width="5" transform="rotate(-14 53 124)"/>
+          <path d="M20 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="var(--green)" stroke="var(--ink)" stroke-width="3"/>
+        </svg>
+      </div>
+      <span class="sticker st1" id="st1">FREE ENTRY</span>
+      <span class="sticker st2" id="st2">150 SEATS ONLY</span>
+      <span class="sticker st3" id="st3">SWAG DROP 🎁</span>
+    </div>
+  </div>
+</header>
+
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="tk-track">
+    <div class="tk-g">
+      <span>OPEN SOURCE</span><i style="color:var(--red)">✦</i><span>GSoC ROADMAP</span><i style="color:var(--blue)">✦</i><span>MLH TEES</span><i style="color:var(--green)">✦</i><span>DEVCOIN DROP</span><i style="color:var(--royal)">✦</i><span>STICKER PACKS</span><i style="color:var(--red)">✦</i><span>ZERO FEES</span><i style="color:var(--blue)">✦</i><span>FOUNDER Q&amp;A</span><i style="color:var(--green)">✦</i>
+    </div>
+    <div class="tk-g">
+      <span>OPEN SOURCE</span><i style="color:var(--red)">✦</i><span>GSoC ROADMAP</span><i style="color:var(--blue)">✦</i><span>MLH TEES</span><i style="color:var(--green)">✦</i><span>DEVCOIN DROP</span><i style="color:var(--royal)">✦</i><span>STICKER PACKS</span><i style="color:var(--red)">✦</i><span>ZERO FEES</span><i style="color:var(--blue)">✦</i><span>FOUNDER Q&amp;A</span><i style="color:var(--green)">✦</i>
+    </div>
+  </div>
+</div>
+
+<!-- SPEAKER -->
+<section class="speaker gridbg" id="speaker">
+  <span class="brackets" style="top:8%;right:5%">&lt;/&gt;</span>
+  <span class="brackets" style="bottom:6%;left:3%;font-size:4rem">{ }</span>
+  <div class="wrap sp-grid">
+    <div class="rev" style="--r:-2.5deg">
+      <div class="polaroid" id="speakerCard">
+        <span class="tape"></span><span class="tape t2"></span>
+        <div class="ph">
+          <div class="ph-fallback">SW</div>
+          <img src="assets/image.png" alt="Shankar Warang — guest speaker" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='src/assets/image.png';}else{this.style.display='none';}">
+        </div>
+        <div class="cap">the real one, in person →</div>
+      </div>
+    </div>
+    <div>
+      <p class="lab rev" style="--c:var(--yellow)"><i></i>01 / Guest Speaker</p>
+      <h2 class="sp-name rev" style="--d:.08s">Shankar<br><span class="hl-w">Warang</span></h2>
+      <div class="sp-role rev" style="--d:.14s">
+        <span class="chip">Co-founder · Tychee Labs</span>
+        <span class="chip">Co-founder · GSYD</span>
+        <span class="chip">Investor at Nothing</span>
+      </div>
+      <span class="topic rev" style="--d:.2s">Talks: Open Source</span>
+      <p class="sp-line rev" style="--d:.26s">He sat in rooms like this one. Now he funds startups. <b>Ask him anything — he answers everything.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- PERKS -->
+<section class="perks gridbg" id="perks">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="lab rev" style="--c:var(--blue)"><i></i>02 / What's in it for you</p>
+      <h2 class="rev" style="--d:.06s">Why you'll <span class="hl">actually</span> come</h2></div>
+      <p class="hand rev" style="--d:.12s">skim now, thank yourself monday ↷</p>
+    </div>
+    <div class="bento">
+      <article class="card c-a rev" style="--r:-1deg">
+        <svg class="ico" width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="3"><circle cx="24" cy="24" r="18" fill="var(--yellow)"/><path d="M24 14v10l7 4"/></svg>
+        <h3>Get mentored → GSoC &amp; C4GT</h3>
+        <p>Selected students get hand-held open-source mentorship from the GDG core. Your first PR = our party day.</p>
+        <span class="stat">3 GSoC finalists mentored last year</span>
+      </article>
+      <article class="card c-b rev" style="--r:1.4deg;--d:.08s">
+        <h3>Meet the founder</h3>
+        <p>10 open minutes of Q&amp;A. No filters, no slides.</p>
+      </article>
+      <article class="card c-c rev" style="--r:-1.2deg;--d:.14s">
+        <svg class="ico" width="40" height="40" viewBox="0 0 48 48"><path d="M24 4l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="var(--red)" stroke="var(--ink)" stroke-width="3"/></svg>
+        <h3>Swag drop</h3>
+        <p>Badges, stickers, MLH tees, DevCoin. Walk in empty-handed, walk out loaded.</p>
+      </article>
+      <article class="card c-d rev" style="--r:.8deg;--d:.2s">
+        <h3>Your future crew</h3>
+        <p>50+ builders from every year in one room. The teammate for your next hackathon is sitting two seats away.</p>
+        <span class="stat">every year · every branch</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- THE PLAN (DARK-NAVY TIMELINE WITH GSAP + SCROLLTRIGGER ROW ENTRANCE) -->
+<section class="plan gridbg" id="plan">
+  <div class="wrap" style="width:100%;">
+    <div class="sec-head">
+      <div>
+        <p class="lab rev" style="--c:var(--yellow)"><i></i>03 / The plan</p>
+        <h2 class="rev" style="--d:.06s;color:#fff">2:00 → 4:30, <span class="hl-w">skimmable</span></h2>
+      </div>
+      <p class="hand rev" style="--d:.12s;color:var(--yellow);font-size:1.35rem">zero homework at the end, promise</p>
+    </div>
+
+    <div style="position:relative;margin-top:36px;">
+      <!-- Growing vertical gradient line across the entire list -->
+      <div class="plan-line" id="planLine"></div>
+
+      <ul class="rows" id="planRows">
+        <!-- Row 1 (Odd: travels from left) -->
+        <li class="timeline-row" style="--tc:var(--blue)">
+          <div><span class="time-pill" style="background:var(--blue);color:#fff;">2:00</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Check-in + sticker pack in hand</b>
+            <small>Yes, the pack is yours before you even sit.</small>
+            <span class="hand-tag">free stuff first ✓</span>
+          </div>
+          <div class="row-sep"></div>
+        </li>
+
+        <!-- Row 2 (Even: travels from right) -->
+        <li class="timeline-row" style="--tc:var(--red)">
+          <div><span class="time-pill" style="background:var(--red);color:#fff;">2:15</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Talk: Open Source, zero → first PR</b>
+            <small>Shankar Warang, live. Q&amp;A mic stays open.</small>
+          </div>
+          <div class="row-sep"></div>
+        </li>
+
+        <!-- Row 3 (Odd: travels from left) -->
+        <li class="timeline-row" style="--tc:var(--yellow)">
+          <div><span class="time-pill" style="background:var(--yellow);color:#101433;">3:15</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Mentorship picks: GSoC / C4GT roadmap</b>
+            <small>How selection works, told straight, in 15 minutes.</small>
+            <span class="hand-tag">your name here?</span>
+          </div>
+          <div class="row-sep"></div>
+        </li>
+
+        <!-- Row 4 (Even: travels from right) -->
+        <li class="timeline-row" style="--tc:var(--green)">
+          <div><span class="time-pill" style="background:var(--green);color:#fff;">3:45</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Swag drop + DevCoin mint</b>
+            <small>MLH tees, GDG badges, DevCoin. Size run is full.</small>
+          </div>
+          <div class="row-sep"></div>
+        </li>
+
+        <!-- Row 5 (Odd: travels from left) -->
+        <li class="timeline-row" style="--tc:var(--blue)">
+          <div><span class="time-pill" style="background:var(--blue);color:#fff;">4:15</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Group photo + hellos</b>
+            <small>The photo goes on the wall. And your story.</small>
+            <span class="hand-tag">say cheese 📸</span>
+          </div>
+          <div class="row-sep"></div>
+        </li>
+
+        <!-- Row 6 (Even: travels from right) -->
+        <li class="timeline-row" style="--tc:var(--red)">
+          <div><span class="time-pill" style="background:var(--red);color:#fff;">4:30</span></div>
+          <div class="dot-wrap">
+            <div class="dot-pulse"></div>
+            <div class="dot-ring"></div>
+          </div>
+          <div class="row-body">
+            <b>Done. Homework: none.</b>
+            <small>Optional after-credits: workshops on 7 &amp; 8 Oct ↓</small>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DEVCON STAGE SHOWCASE -->
+<section class="devcon-showcase" id="devcon">
+  <div class="wrap" style="text-align:center;">
+    <p class="lab" style="justify-content:center;--c:var(--yellow);margin-bottom:0.8rem;"><i></i>04 // THE MAIN STAGE</p>
+    <h2 style="font-size:clamp(2.4rem, 6vw, 4rem);margin-bottom:1.2rem;">What is GDG DevCon?</h2>
+    <p style="font-size:1.1rem;color:rgba(255,255,255,0.85);max-width:48ch;margin:0 auto 2.5rem;">The biggest student developer convergence at LTCE. Zero fluff, pure building.</p>
+    
+    <!-- Shutter Window Frame -->
+    <div class="devcon-window-frame" id="shutterFrame">
+      <img src="assets/committee.jpg" alt="GDG Committee" onerror="this.src='images/image.png'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+      
+      <!-- Automated Wooden Shutter Blinds -->
+      <div id="shutterBlindWrap" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
+
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(7,6,14,0.1) 0%, rgba(7,6,14,0.85) 100%);z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;text-align:left;">
+        <span class="chip" style="align-self:flex-start;background:var(--yellow);color:var(--ink);border-color:#fff;margin-bottom:0.6rem;">WHERE BUILDERS MEET</span>
+        <h3 style="font-size:clamp(1.6rem, 3.5vw, 2.6rem);color:#fff;">450+ Attendees · 12 Keynotes · 6 Labs · ₹1.5L Loot</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOOT -->
+<section class="loot gridbg" id="loot">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="lab rev" style="--c:var(--green)"><i></i>05 / The loot table</p>
+      <h2 class="rev" style="--d:.06s">Walk out <span class="hl">loaded</span></h2></div>
+      <p class="hand rev" style="--d:.12s">price tag: ₹0 (yes, really)</p>
+    </div>
+    <div class="loot-grid">
+      <div class="loot-card rev" style="--lr:-2deg;--lc:var(--blue)">
+        <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><rect x="82" y="86" width="10" height="10" fill="var(--blue)"/><rect x="94" y="86" width="10" height="10" fill="var(--red)"/><rect x="106" y="86" width="10" height="10" fill="var(--yellow)"/><text x="100" y="126" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">MLH</text></svg>
+        <b>MLH Tee</b><small>black. heavy. flexy.</small>
+      </div>
+      <div class="loot-card rev" style="--lr:1.5deg;--lc:var(--red);--d:.06s">
+        <svg viewBox="0 0 200 200"><path d="M70 12 L60 62 M130 12 L140 62" stroke="var(--ink)" stroke-width="6"/><rect x="48" y="56" width="104" height="120" rx="12" fill="#fff" stroke="var(--ink)" stroke-width="6"/><rect x="86" y="70" width="28" height="9" rx="4.5" fill="var(--ink)"/><circle cx="100" cy="112" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M72 152h56" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/></svg>
+        <b>GDG Badge</b><small>lanyard included</small>
+      </div>
+      <div class="loot-card rev" style="--lr:-1deg;--lc:var(--yellow);--d:.12s">
+        <svg viewBox="0 0 200 200"><rect x="28" y="24" width="144" height="152" rx="10" fill="#fff" stroke="var(--ink)" stroke-width="6"/><circle cx="68" cy="66" r="20" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><path d="M132 44l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="4"/><circle cx="70" cy="132" r="17" fill="var(--green)" stroke="var(--ink)" stroke-width="5"/><path d="M120 122h28M120 142h28" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/></svg>
+        <b>Sticker Pack</b><summary></summary><small>laptop fuel</small>
+      </div>
+      <div class="loot-card rev" style="--lr:2deg;--lc:var(--green);--d:.18s">
+        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="var(--ink)" stroke-width="6"/><circle cx="100" cy="100" r="52" fill="none" stroke="var(--ink)" stroke-width="4" stroke-dasharray="8 8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="var(--ink)">&lt;/&gt;</text></svg>
+        <b>DevCoin</b><small>mint it live</small>
+      </div>
+      <div class="loot-card rev" style="--lr:-1.6deg;--lc:var(--royal);--d:.24s">
+        <svg viewBox="0 0 200 200"><path d="M24 52 H176 V84 A16 16 0 0 0 176 116 V148 H24 V116 A16 16 0 0 0 24 84 Z" fill="var(--green)" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M136 52 V148" stroke="var(--ink)" stroke-width="4" stroke-dasharray="7 7"/><text x="80" y="110" text-anchor="middle" font-family="Archivo Black" font-size="26" fill="#fff">PASS</text></svg>
+        <b>Rewards Pass</b><small>faculty mentors too</small>
+      </div>
+    </div>
+    <div class="loot-note rev">
+      <svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><polygon points="100,5 117,32 148,20 146,52 178,52 160,79 190,100 160,121 178,148 146,148 148,180 117,168 100,195 83,168 52,180 54,148 22,148 40,121 10,100 40,79 22,52 54,52 52,20 83,32" fill="var(--red)" stroke="var(--ink)" stroke-width="5"/><text x="100" y="118" text-anchor="middle" font-family="Archivo Black" font-size="46" fill="var(--yellow)">₹0</text></svg>
+      <p class="big">Everything above. Free.<br>Effort tag: <span class="hl">just show up.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3D DEVCON PASS SECTION -->
+<section class="pass-section" id="passes">
+  <div class="wrap" style="text-align:center;">
+    <p class="lab rev" style="justify-content:center;--c:var(--royal);margin-bottom:0.8rem;"><i></i>06 // EXCLUSIVE ACCESS</p>
+    <h2 class="rev" style="--d:.06s;font-size:clamp(2.4rem, 6vw, 4.4rem);">Your All-Access DevCon Pass</h2>
+    <p class="rev" style="--d:.12s;color:rgba(255,255,255,0.75);font-size:1.15rem;max-width:44ch;margin:0 auto 2rem;">Move your cursor to tilt the passes in 3D perspective.</p>
+    
+    <!-- 3D Fan Pass Stage (Horizontal) -->
+    <div class="pass-stage" id="passStage">
+      <!-- Left Fan Card -->
+      <div class="pass-fan-card" id="passLeft" style="transform:translateX(-50px) translateY(18px) rotate(-6deg) scale(0.94);z-index:1;">
+        <img src="dd1431f6-e907-4b5b-a7b9-a68d440fb892.png" alt="DevCon Pass Left" onerror="this.src='assets/committee.jpg'">
+      </div>
+      <!-- Right Fan Card -->
+      <div class="pass-fan-card" id="passRight" style="transform:translateX(50px) translateY(18px) rotate(6deg) scale(0.94);z-index:2;">
+        <img src="dd1431f6-e907-4b5b-a7b9-a68d440fb892.png" alt="DevCon Pass Right" onerror="this.src='assets/committee.jpg'">
+      </div>
+      <!-- Center Main Card -->
+      <div class="pass-fan-card" id="passCenter" style="transform:translateZ(40px);z-index:3;">
+        <img src="dd1431f6-e907-4b5b-a7b9-a68d440fb892.png" alt="DevCon Pass Center" onerror="this.src='assets/committee.jpg'">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FUTURE (NEO-BRUTALISM) -->
+<section class="future gridbg">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="lab rev" style="--c:var(--red)"><i></i>07 / After-credits</p>
+      <h2 class="rev" style="--d:.06s">Monday is <span class="hl">episode 1</span></h2></div>
+      <p class="hand rev" style="--d:.12s">say yes to monday. decide the rest after. (spoiler: everyone says yes)</p>
+    </div>
+    <div class="eps">
+      <article class="ep rev" style="--ec:var(--blue);--er:-1.4deg"><div class="bar"></div><div class="in"><span class="no">ep. 02 →</span><h3>New Tech Updates</h3><p>Monthly drop of what actually changed in tech. No newsletter spam, just the good bits.</p></div></article>
+      <article class="ep rev" style="--ec:var(--yellow);--er:1.2deg;--d:.08s"><div class="bar"></div><div class="in"><span class="no">every sunday →</span><h3>Sunday Tech Bits</h3><p>Snack-size builds &amp; tools to try with your chai. Ten minutes, once a week.</p></div></article>
+      <article class="ep rev" style="--ec:var(--green);--er:-1deg;--d:.16s"><div class="bar"></div><div class="in"><span class="no">7 &amp; 8 oct →</span><h3>Hands-on Workshops</h3><p>Laptops open, mentors roaming, first commit shipped before you leave.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- STORY / INSTA -->
+<section class="story gridbg" id="story">
+  <div class="wrap story-grid">
+    <div>
+      <p class="lab rev" style="--c:var(--yellow)"><i></i>08 / Flex it</p>
+      <h2 class="rev" style="--d:.06s">Be the friend who <span class="hl-w">tells the group chat</span></h2>
+      <p class="lead rev" style="--d:.12s">You scrolled this far — curious, like us. That's the whole qualification. Screenshot the card, story it, tag us. We repost every single one.</p>
+      <div class="cap-box rev" style="--d:.18s" id="caption">🚨 MON · 6 OCT · 2:00 PM · A510
+GDG Orientation Day =
+🎤 founder talk (open source, zero→PR)
+🧭 GSoC & C4GT mentorship picks
+🎁 MLH tees · stickers · DevCoin — all FREE
+One afternoon. Zero fee. Say yes.
+#GDGLTCE #Orientation #OpenSource</div>
+      <button class="btn btn-white rev" style="--d:.24s" id="copyCap">📋 Copy insta caption</button>
+    </div>
+    <div class="phone gridbg rev" id="instaPhone" style="--r:3deg;--d:.1s">
+      <div>
+        <div class="dots"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
+        <p class="psub" style="margin-top:14px;color:#fff">GDG LTCE · ORIENTATION</p>
+      </div>
+      <div>
+        <div class="pdate">6 OCT</div>
+        <p class="psub" style="color:var(--yellow)">2:00–4:30 PM · A510</p>
+        <div class="pline"></div>
+        <p style="font-weight:700;font-size:.95rem">🎤 Shankar Warang — Open Source, live &amp; unfiltered</p>
+      </div>
+      <div>
+        <div class="prow">
+          <svg viewBox="0 0 200 200"><path d="M62 22 L38 38 L16 62 L46 84 L58 72 L58 168 L142 168 L142 72 L154 84 L184 62 L162 38 L138 22 C126 38 74 38 62 22 Z" fill="#141414" stroke="#fff" stroke-width="8"/><text x="100" y="122" text-anchor="middle" font-family="Archivo Black" font-size="30" fill="#fff">MLH</text></svg>
+          <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="72" fill="var(--yellow)" stroke="#fff" stroke-width="8"/><text x="100" y="116" text-anchor="middle" font-family="Archivo Black" font-size="44" fill="var(--ink)">&lt;/&gt;</text></svg>
+          <svg viewBox="0 0 200 200"><path d="M100 8l10 26 26 10-26 10-10 26-10-26-26-10 26-10z" fill="var(--red)" stroke="#fff" stroke-width="8" transform="scale(1.6) translate(-38 -18)"/></svg>
+        </div>
+        <p class="psub" style="text-align:center;margin-top:10px;color:rgba(255,255,255,.7)">SCREENSHOT → STORY → TAG @GDG.LTCE</p>
+      </div>
+      <span class="pstick">FREE SWAGS</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta gridbg" id="ctaSection">
+  <div class="wrap">
+    <p class="lab rev" style="--c:var(--royal)"><i></i>09 / One small ask</p>
+    <h2 class="rev" style="--d:.06s">Not your semester.<br>Just <span class="hl-w" style="background:linear-gradient(transparent 58%,#fff 58%,#fff 94%,transparent 94%)">Monday, 2:00 PM.</span></h2>
+    <ul class="ask">
+      <li class="rev" style="--d:.1s"><i style="background:var(--blue)"></i><span><b>The whole commitment:</b> walk into A510 at 2:00. The rest is fun, not effort.</span></li>
+      <li class="rev" style="--d:.16s"><i style="background:var(--red)"></i><span><b>Good news:</b> it's free. <b>Better news:</b> tees. <b>Best news:</b> you're already invited.</span></li>
+      <li class="rev" style="--d:.22s"><i style="background:var(--green)"></i><span>You're not "a student who attends events." You're <b>a builder who hasn't started yet</b>. Builders collect rooms like this one.</span></li>
+      <li class="rev" style="--d:.28s"><i style="background:var(--royal)"></i><span>You already did the hard part — showing up to college on a Monday. We'll handle the rest.</span></li>
+    </ul>
+    <p class="prize rev" style="--d:.32s">We're glad we could find a window in our schedule for you — one seat, holding your name till 2:05 PM. →</p>
+    <div class="hero-cta rev" style="--d:.36s">
+      <button class="btn btn-royal btn-claim">Claim my seat (7 sec)</button>
+      <a class="btn btn-ink" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GDG%20Orientation%20%F0%9F%8E%92&dates=20251006T140000/20251006T163000&ctz=Asia/Kolkata&location=A510%20Auditorium%2C%20LTCE&details=Founder%20talk%20%2B%20mentorship%20picks%20%2B%20free%20swag%20drop.%20Bring%20nothing%2C%20leave%20loaded.">＋ Add to calendar</a>
+    </div>
+    <p class="fine rev" style="--d:.4s">no fee · no long form · no regret (we checked)</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i></div>
+  <div class="wrap f-grid">
+    <div>
+      <h4>GDG LTCE</h4>
+      <p style="font-weight:500;max-width:34ch">Google Developer Groups · Lokmanya Tilak College of Engineering, University of Mumbai. We learn, build &amp; connect — loudly, and with stickers.</p>
+    </div>
+    <div>
+      <h4>Skim again</h4>
+      <a href="#speaker">Speaker</a><a href="#perks">Perks</a><a href="#plan">Plan</a><a href="#devcon">DevCon</a><a href="#loot">Loot</a><a href="#passes">Passes</a><a href="#story">Insta card</a>
+    </div>
+    <div>
+      <h4>Say hi</h4>
+      <a href="#">Instagram · @gdg.ltce</a><a href="#">WhatsApp group</a><a href="#">GitHub / DevCoin</a><a href="#">Mail the core team</a>
+    </div>
+  </div>
+  <div class="wrap f-bot"><span>© <span id="yr"></span> GDG LTCE · made with ☕ &amp; commits</span><span class="hand" style="font-size:1.2rem;color:var(--yellow)">see you monday, 2:00 sharp →</span></div>
+</footer>
+
+<!-- Toast notification -->
+<div id="toast" role="status"></div>
+
+<script>
+/* ==========================================================================
+   1. WEB AUDIO SYNTHESIZER ENGINE (ZERO AUDIO FILES)
+   ========================================================================== */
+const AudioSynth = new class {
+  constructor() { this.ctx = null; }
+  init() {
+    if (!this.ctx && typeof window !== 'undefined') {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  }
+  playMeow(pitch = 1.0) {
+    this.init(); if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+      osc.type = 'sine';
+      const now = this.ctx.currentTime, baseFreq = 450 * pitch;
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.65, now + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.75, now + 0.38);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      osc.connect(gain); gain.connect(this.ctx.destination);
+      osc.start(now); osc.stop(now + 0.38);
+    } catch(e){}
+  }
+  playSqueak() {
+    this.init(); if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+      osc.type = 'triangle'; const now = this.ctx.currentTime;
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(2200, now + 0.08);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.connect(gain); gain.connect(this.ctx.destination);
+      osc.start(now); osc.stop(now + 0.1);
+    } catch(e){}
+  }
+  playClick() {
+    this.init(); if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+      osc.type = 'square'; const now = this.ctx.currentTime;
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.03);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.connect(gain); gain.connect(this.ctx.destination);
+      osc.start(now); osc.stop(now + 0.03);
+    } catch(e){}
+  }
+};
+
+/* ==========================================================================
+   2. FAST SMOOTH SCROLL PROGRESS BAR
+   ========================================================================== */
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
+  const pBar = document.getElementById('scroll-progress');
+  if (pBar) pBar.style.transform = `scaleX(${progress})`;
+}, { passive: true });
+
+/* ==========================================================================
+   2.5 BLOCKBUSTER HERO INTRO (GSAP 3 MASTER TIMELINE & INTERACTION)
+   ========================================================================== */
+(function setupBlockbusterHeroIntro(){
+  if (typeof gsap === 'undefined') return;
+
+  const wordOrien = document.getElementById('wordOrien');
+  const wordTation = document.getElementById('wordTation');
+  const hlBar = document.getElementById('heroHlBar');
+  const heroGrid = document.getElementById('heroGrid');
+  const megaWrap = document.getElementById('megaWrap');
+  const megaSvg = document.getElementById('megaSvg');
+  const soundWaves = document.querySelectorAll('#soundWaves .sw');
+  const st1 = document.getElementById('st1');
+  const st2 = document.getElementById('st2');
+  const st3 = document.getElementById('st3');
+  const heroChips = document.querySelectorAll('#heroChips .chip');
+  const heroCtaBtn = document.getElementById('heroClaimBtn');
+  const liveBanner = document.getElementById('cd-live');
+  const seatBar = document.getElementById('seatBar');
+  const seatNum = document.getElementById('seatNum');
+  const heroGhost = document.getElementById('heroGhost');
+  const heroKick = document.getElementById('heroKick');
+  const heroSub = document.getElementById('heroSub');
+  const heroHand = document.getElementById('heroHandNote');
+  const heroCd = document.getElementById('cd');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reduced motion instant final state
+  if (prefersReduced) {
+    if (wordOrien) gsap.set(wordOrien, { y: 0, opacity: 1 });
+    if (wordTation) gsap.set(wordTation, { y: 0, opacity: 1 });
+    if (hlBar) gsap.set(hlBar, { scaleX: 1 });
+    if (megaWrap) gsap.set(megaWrap, { scale: 1, rotation: 0, opacity: 1 });
+    if (st1) gsap.set(st1, { scale: 1, rotation: -10, opacity: 1, '--sh': '3px' });
+    if (st2) gsap.set(st2, { scale: 1, rotation: 7, opacity: 1, '--sh': '3px' });
+    if (st3) gsap.set(st3, { scale: 1, rotation: -5, opacity: 1, '--sh': '3px' });
+    if (heroChips) gsap.set(heroChips, { scale: 1, opacity: 1 });
+    if (seatBar) seatBar.style.width = '88%';
+    if (seatNum) seatNum.textContent = '132';
+    return;
+  }
+
+  // Initial States
+  gsap.set([wordOrien, wordTation], { y: '-140%', opacity: 0 });
+  gsap.set(hlBar, { scaleX: 0 });
+  gsap.set(megaWrap, { scale: 0, rotation: -25, opacity: 0 });
+  gsap.set(soundWaves, { scale: 0.4, opacity: 0 });
+  gsap.set([st1, st2, st3], { scale: 0, opacity: 0, '--sh': '0px' });
+  gsap.set(heroChips, { scale: 0.6, opacity: 0 });
+  gsap.set([heroKick, heroSub, heroCtaBtn, heroHand, heroCd], { opacity: 0 });
+
+  function fireMegaphoneConfetti(count = 80){
+    const art = document.getElementById('heroArt');
+    if (!art || typeof confetti === 'undefined') return;
+    const rect = art.getBoundingClientRect();
+    const originX = (rect.left + rect.width * 0.7) / window.innerWidth;
+    const originY = (rect.top + rect.height * 0.45) / window.innerHeight;
+    const particleCount = window.innerWidth < 700 ? Math.floor(count / 2) : count;
+
+    confetti({
+      particleCount: particleCount,
+      spread: 75,
+      startVelocity: 35,
+      origin: { x: Math.max(0.1, Math.min(0.9, originX)), y: Math.max(0.1, Math.min(0.9, originY)) },
+      colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853'],
+      ticks: 160,
+      gravity: 0.9,
+      scalar: 1.05
+    });
+  }
+
+  function screenShake(){
+    if (!heroGrid) return;
+    gsap.fromTo(heroGrid, 
+      { x: -3 }, 
+      { x: 3, duration: 0.04, repeat: 3, yoyo: true, onComplete: () => gsap.set(heroGrid, { x: 0 }) }
+    );
+  }
+
+  // Master Intro Timeline (approx 3.0s)
+  const master = gsap.timeline({ delay: 0.1 });
+
+  // 0.0s: "ORIEN-" drops and bounces with screen shake
+  master.to(wordOrien, {
+    y: '0%', opacity: 1, duration: 0.45, ease: 'bounce.out',
+    onComplete: screenShake
+  }, 0.0);
+
+  // 0.18s: "TATION" drops and bounces with screen shake
+  master.to(wordTation, {
+    y: '0%', opacity: 1, duration: 0.45, ease: 'bounce.out',
+    onComplete: screenShake
+  }, 0.18);
+
+  // Yellow highlight bar scales in
+  master.to(hlBar, { scaleX: 1, duration: 0.4, ease: 'power2.out' }, 0.42);
+
+  // Other text elements fade in
+  master.to([heroKick, heroSub, heroHand, heroCd], { opacity: 1, duration: 0.4, stagger: 0.06 }, 0.4);
+
+  // 0.5s: Megaphone scales from 0 to 1 with back.out(2.2) from rotation -25deg
+  master.to(megaWrap, {
+    scale: 1, rotation: 0, opacity: 1, duration: 0.65, ease: 'back.out(2.2)'
+  }, 0.5);
+
+  // 0.8s: Three SVG sound waves scale and fade outward + Megaphone recoil
+  soundWaves.forEach((wave, idx) => {
+    master.fromTo(wave,
+      { scale: 0.5, opacity: 0.9 },
+      { scale: 1.4, opacity: 0, duration: 0.5, ease: 'power2.out' },
+      0.8 + idx * 0.1
+    );
+  });
+  // Megaphone recoil
+  master.to(megaWrap, { x: 10, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 0.8);
+
+  // 0.9s: Stickers fly out from megaphone mouth to final spots with overshoot
+  // Sticker 1: FREE ENTRY
+  master.fromTo(st1,
+    { scale: 0, opacity: 0, x: 40, y: -20, rotation: -40 },
+    { scale: 1, opacity: 1, x: 0, y: 0, rotation: -10, duration: 0.55, ease: 'back.out(1.8)' },
+    0.9
+  );
+  master.to(st1, { '--sh': '3px', duration: 0.15 }, 1.35);
+
+  // Sticker 2: 150 SEATS ONLY
+  master.fromTo(st2,
+    { scale: 0, opacity: 0, x: -30, y: -50, rotation: -20 },
+    { scale: 1, opacity: 1, x: 0, y: 0, rotation: 7, duration: 0.55, ease: 'back.out(1.8)' },
+    0.98
+  );
+  master.to(st2, { '--sh': '3px', duration: 0.15 }, 1.45);
+
+  // Sticker 3: SWAG DROP
+  master.fromTo(st3,
+    { scale: 0, opacity: 0, x: 60, y: -60, rotation: 30 },
+    { scale: 1, opacity: 1, x: 0, y: 0, rotation: -5, duration: 0.55, ease: 'back.out(1.8)' },
+    1.06
+  );
+  master.to(st3, { '--sh': '3px', duration: 0.15 }, 1.55);
+
+  // 1.0s: Confetti burst from megaphone mouth
+  master.call(() => fireMegaphoneConfetti(80), null, 1.0);
+
+  // 1.4s: Info pills pop in (scale 0.6 -> 1, back.out, stagger 0.1)
+  master.to(heroChips, {
+    scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)', stagger: 0.1
+  }, 1.4);
+
+  // CTA button bounces once
+  master.to(heroCtaBtn, {
+    opacity: 1, y: -8, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out'
+  }, 1.6);
+
+  // LIVE NOW banner slides with wiggle if visible
+  if (liveBanner) {
+    master.fromTo(liveBanner,
+      { x: -50, opacity: 0, rotation: -8 },
+      { x: 0, opacity: 1, rotation: -2, duration: 0.5, ease: 'elastic.out(1, 0.4)' },
+      1.7
+    );
+  }
+
+  // 2.0s: Progress bar fills while counter counts up
+  master.call(() => {
+    if (seatBar) seatBar.style.width = '88%';
+    const countObj = { val: 0 };
+    gsap.to(countObj, {
+      val: 132,
+      duration: 1.2,
+      ease: 'power2.out',
+      onUpdate: () => {
+        if (seatNum) seatNum.textContent = Math.round(countObj.val);
+      }
+    });
+  }, null, 2.0);
+
+  // ── AFTER INTRO INTERACTIONS ──
+
+  // 1. Megaphone pointer tracking (lerps rotation up to ±8deg)
+  const heroArt = document.getElementById('heroArt');
+  if (heroArt) {
+    let currentRot = 0, targetRot = 0;
+    heroArt.addEventListener('pointermove', (e) => {
+      const rect = heroArt.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      targetRot = x * 16; // up to ±8deg
+    });
+    heroArt.addEventListener('pointerleave', () => { targetRot = 0; });
+
+    gsap.ticker.add(() => {
+      currentRot += (targetRot - currentRot) * 0.1;
+      if (megaSvg) gsap.set(megaSvg, { rotation: currentRot });
+    });
+
+    // 2. Click/tap anywhere in hero: "BOOM", confetti burst, stickers nudge and spring back
+    heroArt.addEventListener('pointerdown', () => {
+      AudioSynth.playClick();
+      fireMegaphoneConfetti(60);
+
+      // Sound waves puff
+      soundWaves.forEach((w, i) => {
+        gsap.fromTo(w,
+          { scale: 0.6, opacity: 1 },
+          { scale: 1.6, opacity: 0, duration: 0.4, ease: 'power2.out', delay: i * 0.06 }
+        );
+      });
+
+      // Recoil megaphone
+      gsap.fromTo(megaWrap, { x: 8 }, { x: 0, duration: 0.25, ease: 'elastic.out(1.2, 0.4)' });
+
+      // Sticker random nudge and spring back
+      [st1, st2, st3].forEach(st => {
+        if (!st) return;
+        const nudgeX = (Math.random() - 0.5) * 24;
+        const nudgeY = (Math.random() - 0.5) * 24;
+        const nudgeR = (Math.random() - 0.5) * 16;
+        gsap.to(st, {
+          x: nudgeX, y: nudgeY, rotation: `+=${nudgeR}`, duration: 0.15,
+          yoyo: true, repeat: 1, ease: 'back.out(2)'
+        });
+      });
+    });
+  }
+
+  // 3. On scroll: stickers parallax at different speeds, .ghost moves opposite
+  if (typeof ScrollTrigger !== 'undefined') {
+    if (st1) {
+      gsap.to(st1, { y: -80, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
+    }
+    if (st2) {
+      gsap.to(st2, { y: -140, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
+    }
+    if (st3) {
+      gsap.to(st3, { y: -40, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
+    }
+    if (heroGhost) {
+      gsap.to(heroGhost, { y: 60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: 0.5 } });
+    }
+  }
+})();
+
+/* ==========================================================================
+   3. CAT & MOUSE INTERACTIVE CURSOR
+   ========================================================================== */
+(function setupCatMouse(){
+  const mouseEl = document.getElementById('mouse'), catEl = document.getElementById('cat');
+  if(!mouseEl || !catEl) return;
+  let target = { x: window.innerWidth * 0.6, y: window.innerHeight * 0.45 };
+  let mousePos = { x: target.x, y: target.y };
+  let catPos = { x: window.innerWidth * 0.2, y: window.innerHeight * 0.7 };
+  let lastMove = Date.now(), cooldown = 0;
+
+  window.addEventListener('pointermove', e => {
+    target.x = e.clientX; target.y = e.clientY; lastMove = Date.now();
+  }, {passive: true});
+
+  window.addEventListener('pointerdown', e => {
+    target.x = e.clientX; target.y = e.clientY;
+    AudioSynth.playSqueak();
+  }, {passive: true});
+
+  function loop(){
+    mousePos.x += (target.x - mousePos.x) * 0.25;
+    mousePos.y += (target.y - mousePos.y) * 0.25;
+    mouseEl.style.transform = `translate(${mousePos.x - 15}px, ${mousePos.y - 15}px)`;
+
+    const dx = mousePos.x - catPos.x, dy = mousePos.y - catPos.y;
+    const dist = Math.hypot(dx, dy);
+    catPos.x += dx * 0.06; catPos.y += dy * 0.06;
+    const rot = Math.max(-14, Math.min(14, dy * 0.03));
+    catEl.style.transform = `translate(${catPos.x - 15}px, ${catPos.y - 15}px) scaleX(${dx > 0 ? -1 : 1}) rotate(${rot}deg)`;
+
+    // Catch trigger
+    if (dist < 28 && Date.now() > cooldown) {
+      cooldown = Date.now() + 900;
+      AudioSynth.playMeow();
+      if (typeof confetti !== 'undefined') {
+        confetti({
+          particleCount: 25, spread: 60,
+          origin: { x: mousePos.x / window.innerWidth, y: mousePos.y / window.innerHeight },
+          colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
+        });
+      }
+      target.x = Math.max(40, Math.min(window.innerWidth - 40, target.x + (Math.random() - 0.5) * 400));
+      target.y = Math.max(40, Math.min(window.innerHeight - 40, target.y + (Math.random() - 0.5) * 300));
+    }
+    catEl.classList.toggle('sleep', Date.now() - lastMove > 4500);
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ==========================================================================
+   4. THE PLAN TIMELINE ANIMATION (GSAP 3 + SCROLLTRIGGER)
+   ========================================================================== */
+(function setupPlanTimelineAnimation(){
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  const planSection = document.getElementById('plan');
+  const planRows = document.getElementById('planRows');
+  const planLine = document.getElementById('planLine');
+  const rows = document.querySelectorAll('.plan .timeline-row');
+  if (!planSection || !rows.length) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    if (planLine) gsap.set(planLine, { scaleY: 1 });
+    rows.forEach(row => {
+      gsap.set(row, { x: 0, skewX: 0, rotation: 0, opacity: 1 });
+      const pill = row.querySelector('.time-pill');
+      const dot = row.querySelector('.dot-ring');
+      const sep = row.querySelector('.row-sep');
+      const hand = row.querySelector('.hand-tag');
+      if (pill) gsap.set(pill, { scale: 1 });
+      if (dot) gsap.set(dot, { scale: 1 });
+      if (sep) gsap.set(sep, { scaleX: 1 });
+      if (hand) gsap.set(hand, { opacity: 1, rotation: -2, y: 0 });
+    });
+    return;
+  }
+
+  // 1. Vertical line grows downward across the whole list
+  if (planLine && planRows) {
+    gsap.fromTo(planLine, 
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: planRows,
+          start: 'top 80%',
+          end: 'bottom 60%',
+          scrub: true
+        }
+      }
+    );
+  }
+
+  // 2. Responsive matchMedia for travel distance (±110vw vs ±40vw)
+  const mm = gsap.matchMedia();
+
+  mm.add({
+    isDesktop: '(min-width: 700px)',
+    isMobile: '(max-width: 699px)'
+  }, (context) => {
+    const { isDesktop } = context.conditions;
+    const travelDist = isDesktop ? 110 : 40;
+
+    rows.forEach((row, i) => {
+      const isOdd = (i % 2 === 0); // 1, 3, 5 are odd indices (0, 2, 4)
+      const startX = isOdd ? `-${travelDist}vw` : `${travelDist}vw`;
+      const startSkew = isOdd ? -12 : 12;
+      const startRot = isOdd ? -3 : 3;
+
+      const timePill = row.querySelector('.time-pill');
+      const dotRing = row.querySelector('.dot-ring');
+      const dotPulse = row.querySelector('.dot-pulse');
+      const rowSep = row.querySelector('.row-sep');
+      const handTag = row.querySelector('.hand-tag');
+
+      // Initial state
+      gsap.set(row, { x: startX, skewX: startSkew, rotation: startRot, opacity: 0 });
+      if (timePill) gsap.set(timePill, { scale: 0.6 });
+      if (dotRing) gsap.set(dotRing, { scale: 0 });
+      if (dotPulse) gsap.set(dotPulse, { scale: 1, opacity: 0 });
+      if (rowSep) gsap.set(rowSep, { scaleX: 0 });
+      if (handTag) gsap.set(handTag, { opacity: 0, rotation: -6, y: 10 });
+
+      // Row timeline with its own ScrollTrigger
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: row,
+          start: 'top 85%',
+          end: 'top 55%',
+          scrub: 0.6
+        }
+      });
+
+      // Opacity 0 to 1 over first 30% of tween
+      tl.to(row, { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
+
+      // Travel x with power3.out / back.out(1.2) overshoot, skew and rotation resolve to 0
+      tl.to(row, { x: '0vw', duration: 1, ease: 'back.out(1.2)' }, 0);
+      tl.to(row, { skewX: 0, rotation: 0, duration: 1, ease: 'power3.out' }, 0);
+
+      // Time label scales 0.6 to 1 with "back.out(2)" a moment before text lands
+      if (timePill) {
+        tl.to(timePill, { scale: 1, duration: 0.4, ease: 'back.out(2)' }, 0.35);
+      }
+
+      // Ring dot scales 0 to 1
+      if (dotRing) {
+        tl.to(dotRing, { scale: 1, duration: 0.4, ease: 'back.out(1.8)' }, 0.45);
+      }
+
+      // Expanding, fading pulse ring when row is about 90% in
+      if (dotPulse) {
+        tl.to(dotPulse, { opacity: 1, scale: 1, duration: 0.05 }, 0.85)
+          .to(dotPulse, { scale: 2.6, opacity: 0, duration: 0.3, ease: 'power2.out' }, 0.9);
+      }
+
+      // Dashed separator draws left to right
+      if (rowSep) {
+        tl.to(rowSep, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, 0.2);
+      }
+
+      // Handwritten note rotates & fades in after row has landed
+      if (handTag) {
+        tl.to(handTag, { opacity: 1, rotation: -2, y: 0, duration: 0.35, ease: 'power2.out' }, 0.8);
+      }
+    });
+  });
+
+  // Call ScrollTrigger.refresh() after fonts load
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+})();
+
+/* ==========================================================================
+   5. DEVCON SHUTTER REVEAL ON SCROLL
+   ========================================================================== */
+(function setupShutter(){
+  const frame = document.getElementById('shutterFrame');
+  const wrap = document.getElementById('shutterBlindWrap');
+  if(!frame || !wrap) return;
+
+  if (wrap.children.length === 0) {
+    for(let i=0; i<24; i++){
+      const blind = document.createElement('div');
+      blind.className = 'shutter-blind';
+      blind.style.top = `${i * 4.18}%`;
+      blind.style.transitionDelay = `${i * 0.025}s`;
+      wrap.appendChild(blind);
+    }
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        wrap.classList.add('shutter-open');
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.15 });
+  obs.observe(frame);
+})();
+
+/* ==========================================================================
+   6. 3D PASSES MOUSE PARALLAX
+   ========================================================================== */
+(function setup3DPasses(){
+  const stage = document.getElementById('passStage');
+  if(!stage) return;
+
+  stage.addEventListener('pointermove', e => {
+    const rect = stage.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    stage.style.transform = `rotateY(${x * 24}deg) rotateX(${-y * 20}deg)`;
+  });
+  stage.addEventListener('pointerleave', () => {
+    stage.style.transform = `rotateY(0deg) rotateX(0deg)`;
+  });
+})();
+
+/* ==========================================================================
+   7. REAL-TIME COUNTDOWN & SEAT PROOF COUNTER
+   ========================================================================== */
+const target = new Date('2025-10-06T14:00:00+05:30').getTime();
+const pad = n => String(n).padStart(2,'0');
+(function tickCd(){
+  const diff = target - Date.now();
+  if(diff <= 0){
+    document.querySelectorAll('.cd .box').forEach(b=>b.style.display='none');
+    const liveEl = document.getElementById('cd-live');
+    if (liveEl) liveEl.style.display='block';
+    return;
+  }
+  document.getElementById('cd-d').textContent = pad(Math.floor(diff/864e5));
+  document.getElementById('cd-h').textContent = pad(Math.floor(diff/36e5)%24);
+  document.getElementById('cd-m').textContent = pad(Math.floor(diff/6e4)%60);
+  document.getElementById('cd-s').textContent = pad(Math.floor(diff/1e3)%60);
+  setTimeout(tickCd,1000);
+})();
+
+// Scroll reveal observer (ensures all .rev sections fade/slide in smoothly)
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold: 0.05, rootMargin: '0px 0px -40px 0px'});
+document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+// Seats counter
+const TOTAL = 150; let claimed = 132;
+const seatNum = document.getElementById('seatNum'), seatBar = document.getElementById('seatBar');
+const seatIO = new IntersectionObserver(es => es.forEach(e => {
+  if(!e.isIntersecting) return; seatIO.disconnect();
+  seatBar.style.width = (claimed/TOTAL*100) + '%';
+  const t0 = performance.now();
+  (function count(t){
+    const p = Math.min((t-t0)/1200,1);
+    seatNum.textContent = Math.round(132 * (1-Math.pow(1-p,3)));
+    if(p<1) requestAnimationFrame(count);
+  })(t0);
+}), {threshold:.3});
+const seatsEl = document.querySelector('.seats');
+if (seatsEl) seatIO.observe(seatsEl);
+
+// Toast
+let toastTimeout;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3600);
+}
+
+// Seat claim logic
+let mine = null;
+document.querySelectorAll('.btn-claim').forEach(b => b.addEventListener('click', () => {
+  AudioSynth.playClick();
+  if(mine){ showToast('😌 Already held, builder. Seat #' + mine + ', Monday 2:00, A510.'); return; }
+  claimed++; mine = claimed;
+  seatNum.textContent = claimed; seatBar.style.width = (claimed/TOTAL*100) + '%';
+  document.querySelectorAll('.btn-claim').forEach(x => { x.classList.add('done'); x.textContent = 'Seat #' + mine + ' held ✓'; });
+  showToast('🎉 Seat #' + mine + ' held for you. Mon · 2:00 PM · A510. That was the hard part.');
+  if (typeof confetti !== 'undefined') {
+    confetti({ particleCount: 50, spread: 70, origin: { y: 0.85 } });
+  }
+}));
+
+// Copy insta caption
+const copyBtn = document.getElementById('copyCap');
+if (copyBtn) {
+  copyBtn.addEventListener('click', async () => {
+    AudioSynth.playClick();
+    const txt = document.getElementById('caption').innerText;
+    try {
+      await navigator.clipboard.writeText(txt);
+      showToast('📋 Caption copied. Paste, post, tag us — we repost everything.');
+      if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+      }
+    } catch {
+      showToast('Long-press the caption box to copy 🙂');
+    }
+  });
+}
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
